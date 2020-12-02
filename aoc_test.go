@@ -1,6 +1,8 @@
 package aoc
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestMin(test *testing.T) {
 	tt := []TestTable{
@@ -30,4 +32,17 @@ func TestMax(test *testing.T) {
 		b := t.In.([]int)[1]
 		AssertEq(test, Max(a, b), t.Out)
 	}
+}
+
+func TestInputInts(test *testing.T) {
+	// Checks both comma-separated and line separated formats
+	actual := Ints(Input("aoc_test_input.txt"))
+	expected := []int{0,1,-1,2,3}
+	AssertEq(test, actual, expected)
+}
+
+func TestLines(test *testing.T) {
+	actual := Lines(Input("aoc_test_input.txt"))
+	expected := []string{"0,1,-1","2","3"}
+	AssertEq(test, actual, expected)
 }

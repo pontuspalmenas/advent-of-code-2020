@@ -7,22 +7,20 @@ import (
 
 func Test1(test *testing.T) {
 	tt := []TestTable{
-		{In: 0, Out: 0},
+		{In: []string{"1-3 a: abcde", "1-3 b: cdefg", "2-9 c: ccccccccc"}, Out: 2},
 	}
 
 	for _, t := range tt {
-		in := []int{t.In.(int)}
-		AssertEq(test, Solve1(in), t.Out)
+		AssertEq(test, Solve1(t.In.([]string)), t.Out)
 	}
 }
 
 func Test2(test *testing.T) {
 	tt := []TestTable{
-		{In: 0, Out: 0},
+		{In: []string{}, Out: 2},
 	}
 
 	for _, t := range tt {
-		in := []int{t.In.(int)}
-		AssertEq(test, Solve2(in), t.Out)
+		AssertEq(test, Solve2(t.In.([]string)), t.Out)
 	}
 }

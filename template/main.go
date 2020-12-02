@@ -1,12 +1,12 @@
-package template
+package main
 
 import (
-	"aoc"
+	. "aoc"
 	"fmt"
 )
 
 func main() {
-	input := aoc.InputIntLines("day0x/input.txt")
+	input := Ints(Input("day0x/input.txt"))
 	fmt.Println(Solve1(input))
 	fmt.Println(Solve2(input))
 }
