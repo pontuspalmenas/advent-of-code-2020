@@ -46,3 +46,9 @@ func TestLines(test *testing.T) {
 	expected := []string{"0,1,-1","2","3"}
 	AssertEq(test, actual, expected)
 }
+
+func TestChrAt(test *testing.T) {
+	actual := ChrAt("abc123", 2)
+	expected := "c"
+	AssertEq(test, actual, expected)
+}

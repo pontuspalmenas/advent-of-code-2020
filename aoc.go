@@ -72,3 +72,7 @@ func Check(err error) {
 		panic(err)
 	}
 }
+
+func ChrAt(s string, i int) string {
+	return s[i:i+1]
+}

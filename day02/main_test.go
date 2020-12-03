@@ -15,5 +15,11 @@ func Test1(test *testing.T) {
 }
 
 func Test2(test *testing.T) {
-	AssertEq(test, Solve2(""), 0)
+	s := `
+1-3 a: abcde
+1-3 b: cdefg
+2-9 c: ccccccccc
+`
+
+	AssertEq(test, Solve2(s), 1)
 }
