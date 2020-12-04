@@ -17,22 +17,14 @@ func Solve1(ss []string) int {
 
 func countTrees(ss []string, right int, down int) int {
 	trees := 0
-	y := 0
 	x := 0
-	width := len(ss[0])
-	lines := len(ss)
-	for {
-		y = y + down
-		x = (x + right) % width
+	for y := down; y < len(ss); y += down {
+		draw(ss[y], x)
+		x = (x + right) % len(ss[0]) // map is wrapped
 
-		if y >= lines {
-			break
-		}
-
-		if ChrAt(ss[y], x) == "#" {
+		if ss[y][x] == '#' {
 			trees++
 		}
-		//draw(ss[y], x)
 	}
 
 	return trees
@@ -47,6 +39,13 @@ func Solve2(ss []string) int {
 }
 
 func draw(s string, x int) {
+	/*fmt.Print(s[0:x])
+	if s[x] == '#' {
+		fmt.Print("X")
+	} else {
+		fmt.Print("O")
+	}
+	fmt.Println(s[x+1:])*/
 	l := []rune(s)
 	if l[x] == '#' {
 		l[x] = 'X'

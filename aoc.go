@@ -1,7 +1,9 @@
 package aoc
 
 import (
+	"fmt"
 	"io/ioutil"
+	"os"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -75,4 +77,17 @@ func Check(err error) {
 
 func ChrAt(s string, i int) string {
 	return s[i:i+1]
+}
+
+func Sscanf(s string, format string, a ...interface{}) {
+	_, err := fmt.Sscanf(s, format, a...)
+	Check(err)
+}
+
+func Fscanf(path string, format string, a ...interface{}) {
+	file, err := os.Open(path)
+	Check(err)
+	defer file.Close()
+	_, err = fmt.Fscanf(file, format, a...)
+	Check(err)
 }

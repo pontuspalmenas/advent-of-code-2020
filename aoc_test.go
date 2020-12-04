@@ -52,3 +52,29 @@ func TestChrAt(test *testing.T) {
 	expected := "c"
 	AssertEq(test, actual, expected)
 }
+
+func TestSscanf(test *testing.T) {
+	var n1 int
+	var n2 int
+	var s1 rune
+	var s2 string
+	Sscanf("7-11 m: mmmmmmsmmmmm", "%d-%d %c: %s", &n1, &n2, &s1, &s2)
+
+	AssertEq(test, n1, 7)
+	AssertEq(test, n2, 11)
+	AssertEq(test, s1, 'm')
+	AssertEq(test, s2, "mmmmmmsmmmmm")
+}
+
+func TestFscanf(test *testing.T) {
+	var n1 int
+	var n2 int
+	var s1 rune
+	var s2 string
+	Sscanf("aoc_test_input2.txt", "%d-%d %c: %s", &n1, &n2, &s1, &s2)
+
+	AssertEq(test, n1, 7)
+	AssertEq(test, n2, 11)
+	AssertEq(test, s1, 'm')
+	AssertEq(test, s2, "mmmmmmsmmmmm")
+}
