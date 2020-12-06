@@ -21,11 +21,11 @@ func Solve1(input []string) int {
 }
 
 func row(s string) int {
-	l := 0
-	h := 127
+	max := 127
+	var r int
 	for i := 0; i < 7; i++ {
 		if s[i] == 'F' {
-			h = h / 2
+			max = max / 2
 			fmt.Printf("F means to take the lower half, keeping rows %d through %d\n", l, h)
 		} else {
 			l = h / 2

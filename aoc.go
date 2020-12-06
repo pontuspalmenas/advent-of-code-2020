@@ -91,3 +91,12 @@ func Fscanf(path string, format string, a ...interface{}) {
 	_, err = fmt.Fscanf(file, format, a...)
 	Check(err)
 }
+
+func SplitByEmptyNewline(str string) []string {
+	s := strings.ReplaceAll(str, "\r\n", "\n")
+	return regexp.MustCompile(`\n\s*\n`).Split(s, -1)
+}
+
+func Printfln(format string, a ...interface{}) {
+	fmt.Printf("%s\n", fmt.Sprintf(format, a...))
+}

@@ -78,3 +78,7 @@ func TestFscanf(test *testing.T) {
 	AssertEq(test, s1, 'm')
 	AssertEq(test, s2, "mmmmmmsmmmmm")
 }
+
+func TestPrintfln(t *testing.T) {
+	Printfln("%s %d", "hej", 555)
+}
