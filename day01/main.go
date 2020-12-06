@@ -11,6 +11,8 @@ func main() {
 	fmt.Println(Solve2(input))
 }
 
+// Todo: unoptimized. Solve for O(n), O(n^2) for p1, p2
+
 func Solve1(input []int) int {
 	for _, i := range input {
 		for _, j := range input {
