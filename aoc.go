@@ -1,11 +1,13 @@
 package aoc
 
 import (
-	"bufio"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"reflect"
+	"regexp"
 	"strconv"
+	"strings"
 	"testing"
 )
 
@@ -22,56 +24,35 @@ func AssertEq(t *testing.T, actual, expected interface{}) {
 
 func Input(f string) string {
 	b, err := ioutil.ReadFile(f)
-	if err != nil {
-		panic(err)
-	}
+	Check(err)
 	return string(b)
 }
 
 func ToInt(s string) int {
 	n, err := strconv.Atoi(s)
-	if err != nil {
-		panic(err)
-	}
+	Check(err)
 	return n
 }
 
-func InputLines(path string) []string {
-	f, err := os.Open(path)
-	defer f.Close()
-	if err != nil {
-		panic(err)
-	}
-	sc := bufio.NewScanner(f)
-	sc.Split(bufio.ScanLines)
+func Lines(s string) []string {
+	ls := strings.Split(strings.ReplaceAll(s, "\r\n", "\n"), "\n")
 
-	var out []string
-	for sc.Scan() {
-		out = append(out, sc.Text())
+	// If last line is empty, skip it
+	i := len(ls)
+	if ls[i-1] == "" {
+		ls = ls[:i-1]
 	}
-
-	return out
+	return ls
 }
 
-func InputIntLines(path string) []int {
-	f, err := os.Open(path)
-	defer f.Close()
-	if err != nil {
-		panic(err)
-	}
-	sc := bufio.NewScanner(f)
-	sc.Split(bufio.ScanLines)
-
-	var out []int
-	for sc.Scan() {
-		i, err := strconv.Atoi(sc.Text())
-		if err != nil {
-			panic(err)
-		}
-		out = append(out, i)
+func Ints(s string) []int {
+	var ints []int
+	re := regexp.MustCompile(`-?\d+`)
+	for _, e := range re.FindAllString(s, -1) {
+		ints = append(ints, ToInt(e))
 	}
 
-	return out
+	return ints
 }
 
 func Min(a, b int) int {
@@ -86,4 +67,36 @@ func Max(a, b int) int {
 		return a
 	}
 	return b
+}
+
+func Check(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
+func ChrAt(s string, i int) string {
+	return s[i:i+1]
+}
+
+func Sscanf(s string, format string, a ...interface{}) {
+	_, err := fmt.Sscanf(s, format, a...)
+	Check(err)
+}
+
+func Fscanf(path string, format string, a ...interface{}) {
+	file, err := os.Open(path)
+	Check(err)
+	defer file.Close()
+	_, err = fmt.Fscanf(file, format, a...)
+	Check(err)
+}
+
+func SplitByEmptyNewline(str string) []string {
+	s := strings.ReplaceAll(str, "\r\n", "\n")
+	return regexp.MustCompile(`\n\s*\n`).Split(s, -1)
+}
+
+func Printfln(format string, a ...interface{}) {
+	fmt.Printf("%s\n", fmt.Sprintf(format, a...))
 }
