@@ -20,7 +20,7 @@ func Solve1(s string) int {
 	res := regex.FindAllStringSubmatch(s, -1)
 	for i := range res {
 		count := strings.Count(res[i][4], res[i][3])
-		if count >= ToInt(res[i][1]) && count <= ToInt(res[i][2]) {
+		if count >= Int(res[i][1]) && count <= Int(res[i][2]) {
 			valid++
 		}
 	}
@@ -37,8 +37,8 @@ func Solve2(s string) int {
 
 		str := res[i][4]
 		chr := res[i][3]
-		pos1 := ToInt(res[i][1])
-		pos2 := ToInt(res[i][2])
+		pos1 := Int(res[i][1])
+		pos2 := Int(res[i][2])
 
 		pos1ok := str[pos1-1:pos1] == chr
 		pos2ok := str[pos2-1:pos2] == chr

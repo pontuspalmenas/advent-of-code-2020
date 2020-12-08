@@ -140,7 +140,7 @@ func cid(s string) bool {
 }
 
 func year(s string, min int, max int) bool {
-	n := ToInt(s)
+	n := Int(s)
 	return n >= min && n <= max
 }
 

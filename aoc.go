@@ -28,7 +28,7 @@ func Input(f string) string {
 	return string(b)
 }
 
-func ToInt(s string) int {
+func Int(s string) int {
 	n, err := strconv.Atoi(s)
 	Check(err)
 	return n
@@ -49,7 +49,7 @@ func Ints(s string) []int {
 	var ints []int
 	re := regexp.MustCompile(`-?\d+`)
 	for _, e := range re.FindAllString(s, -1) {
-		ints = append(ints, ToInt(e))
+		ints = append(ints, Int(e))
 	}
 
 	return ints
