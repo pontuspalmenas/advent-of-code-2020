@@ -25,9 +25,6 @@ iyr:2011 ecl:brn hgt:59in
 	AssertEq(test, Solve2(splitByEmptyNewline(s)), 2)
 }
 
-
-
-
 func Test2(test *testing.T) {
 	invalid :=
 `eyr:1972 cid:100

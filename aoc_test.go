@@ -66,19 +66,29 @@ func TestSscanf(test *testing.T) {
 	AssertEq(test, s2, "mmmmmmsmmmmm")
 }
 
-func TestFscanf(test *testing.T) {
-	var n1 int
-	var n2 int
-	var s1 rune
-	var s2 string
-	Sscanf("aoc_test_input2.txt", "%d-%d %c: %s", &n1, &n2, &s1, &s2)
-
-	AssertEq(test, n1, 7)
-	AssertEq(test, n2, 11)
-	AssertEq(test, s1, 'm')
-	AssertEq(test, s2, "mmmmmmsmmmmm")
-}
-
 func TestPrintfln(t *testing.T) {
 	Printfln("%s %d", "hej", 555)
+}
+
+func TestRegex(t *testing.T) {
+	match := Regex("^(.*) bags contain (.*)", "vibrant bronze bags contain 4 posh orange bags.")
+	AssertEq(t, match[0], "vibrant bronze")
+	AssertEq(t, match[1], "4 posh orange bags.")
+}
+
+func TestRegexAll(t *testing.T) {
+	s :=
+`vibrant bronze bags contain 4 posh orange bags.
+faded blue bags contain no other bags.
+dark olive bags contain 3 faded blue bags, 4 dotted black bags.`
+
+	match := RegexAll("(.*) bags contain (.*)", s)
+	AssertEq(t, match[0][0], "vibrant bronze")
+	AssertEq(t, match[0][1], "4 posh orange bags.")
+
+	AssertEq(t, match[1][0], "faded blue")
+	AssertEq(t, match[1][1], "no other bags.")
+
+	AssertEq(t, match[2][0], "dark olive")
+	AssertEq(t, match[2][1], "3 faded blue bags, 4 dotted black bags.")
 }

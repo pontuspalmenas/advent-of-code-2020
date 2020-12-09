@@ -29,16 +29,5 @@ s :=
 576`
 
 	AssertEq(test, Solve1(Ints(s), 5), 127)
-
-}
-
-func Test2(test *testing.T) {
-	tt := []TestTable{
-		{In: 0, Out: 0},
-	}
-
-	for _, t := range tt {
-		in := []int{t.In.(int)}
-		AssertEq(test, Solve2(in), t.Out)
-	}
+	AssertEq(test, Solve2(Ints(s), 127), 62)
 }
