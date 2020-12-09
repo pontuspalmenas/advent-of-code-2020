@@ -6,23 +6,15 @@ import (
 )
 
 func Test1(test *testing.T) {
-	tt := []TestTable{
-		{In: 0, Out: 0},
-	}
+	s:=
+``
 
-	for _, t := range tt {
-		in := []int{t.In.(int)}
-		AssertEq(test, Solve1(in), t.Out)
-	}
+	AssertEq(test, Solve1(Ints(s)), 0)
 }
 
 func Test2(test *testing.T) {
-	tt := []TestTable{
-		{In: 0, Out: 0},
-	}
+	s:=
+``
 
-	for _, t := range tt {
-		in := []int{t.In.(int)}
-		AssertEq(test, Solve2(in), t.Out)
-	}
+	AssertEq(test, Solve2(Ints(s)), 0)
 }

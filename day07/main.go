@@ -3,8 +3,9 @@ package main
 import (
 	. "aoc"
 	"fmt"
-	"strings"
 )
+
+type Rules map[string]map[string]int
 
 func main() {
 	input := Lines(Input("day07/input.txt"))
@@ -12,52 +13,62 @@ func main() {
 	fmt.Println(Solve2(input))
 }
 
-type bag struct {
-	
-}
-
-var bags map[string]int
-
 func Solve1(input []string) int {
-	bags = make(map[string]int)
+	rules := parse(input)
 
+	isFound := true
+	visited := make(map[string]bool)
+	visited["shiny gold"] = true
 
-	for i, s := range input {
-		bags[name(s)] = i
-	}
-
-	dump()
-
-	return 0
-}
-
-
-func name(rule string) string {
-	split := strings.Split(rule, " ")
-	return split[0] + " " + split[1]
-}
-
-func carry(rule string) map[string]int {
-	out := make(map[string]int)
-	contain := strings.Split(rule, "contain ")[1]
-	for _, bag := range strings.Split(contain, ", ") {
-		if bag == "no other bags." {
-			continue
+	// While we still find shiny gold, keep looking for more
+	for isFound {
+		isFound = false
+		for k, v := range rules { // check top-level bags
+			if visited[k] { // already seen?
+				continue
+			}
+			for key, _ := range v { // check sub-level bags
+				if visited[key] {
+					visited[k] = true
+					isFound = true
+					break
+				}
+			}
 		}
-		s := strings.Split(bag, " ")
-		bagName := s[1] + " " + s[2]
-		out[bagName] = Int(s[0])
 	}
 
-	return out
-}
-
-func dump() {
-	for name, id := range bags {
-		Printfln("%s %d", name, id)
-	}
+	return len(visited) - 1
 }
 
 func Solve2(input []string) int {
-	return 0
+	rules := parse(input)
+	return count(rules, make(map[string]int), "shiny gold")
+}
+
+func count(rules Rules, list map[string]int, name string) int {
+	if val, ok := list[name]; ok {
+		return val
+	}
+	sum := 0
+	for k, v := range rules[name] {
+		sum += v * (1 + count(rules, list, k)) // keep looking recursively
+	}
+	list[name] = sum
+	return sum
+}
+
+func parse(in []string) Rules {
+	bags := Rules{}
+	for _, s := range in {
+		match := Regex(`^(.*) bags contain (.*)`, s)
+		name := match[0]
+		bags[name] = map[string]int{}
+		for _, content := range RegexAll(`(\d+) (.+?) bag`, match[1]) {
+			subName := content[1]
+			amount := Int(content[0])
+			bags[name][subName] = amount
+		}
+	}
+
+	return bags
 }

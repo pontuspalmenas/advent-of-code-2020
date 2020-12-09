@@ -100,3 +100,28 @@ func SplitByEmptyNewline(str string) []string {
 func Printfln(format string, a ...interface{}) {
 	fmt.Printf("%s\n", fmt.Sprintf(format, a...))
 }
+
+// Regex returns all matches, skipping the full match
+func Regex(r string, s string) []string {
+	var out []string
+	submatch := regexp.MustCompile(r).FindStringSubmatch(s)
+	for i := 1; i < len(submatch); i++ {
+		out = append(out, submatch[i])
+	}
+	return out
+}
+
+// RegexAll returns all submatches, skipping the full match
+func RegexAll(r string, s string) [][]string {
+	var out [][]string
+	submatches := regexp.MustCompile(r).FindAllStringSubmatch(s, -1)
+	for _, submatch := range submatches {
+		var parts []string
+		for i := 1; i < len(submatch); i++ {
+			parts = append(parts, submatch[i])
+		}
+		out = append(out, parts)
+	}
+
+	return out
+}
