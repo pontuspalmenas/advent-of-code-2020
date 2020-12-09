@@ -2,6 +2,7 @@ package main
 
 import (
 	. "aoc"
+	. "aoc/vm"
 	"fmt"
 )
 
@@ -14,23 +15,20 @@ func main() {
 }
 
 func Solve1(input []string) int {
-	_, acc := run(parse(input))
+	vm := VM{}
+	vm.Load(parse(input))
+	vm.Run()
 
-	return acc
+	return vm.Accumulator
 }
 
-type instr struct {
-	op string
-	arg int
-}
-
-func parse(in []string) map[int]instr {
-	code := make(map[int]instr)
+func parse(in []string) map[int]Instruction {
+	code := make(map[int]Instruction)
 	var op string
 	var arg int
 	for i, s := range in {
 		Sscanf(s, "%s %d", &op, &arg)
-		code[i] = instr{op, arg}
+		code[i] = Instruction{Op: op, Arg: arg}
 	}
 
 	return code
@@ -38,64 +36,34 @@ func parse(in []string) map[int]instr {
 
 func Solve2(input []string) int {
 	code := parse(input)
+	vm := VM{}
 
 	for i := 0; i < len(code); i++ {
 		modCode := copyMap(code)
 
-		if modCode[i].op == "jmp" {
-			modCode[i] = instr{"nop", modCode[i].arg}
-			status, acc := run(modCode)
-			if status == EXIT_SUCCESS {
-				return acc
+		if modCode[i].Op == "jmp" {
+			modCode[i] = Instruction{Op: "nop", Arg: modCode[i].Arg}
+			vm.Load(modCode)
+			if vm.Run() == EXIT_SUCCESS {
+				return vm.Accumulator
 			}
 		}
-		if modCode[i].op == "nop" {
-			modCode[i] = instr{"jmp", modCode[i].arg}
-			status, acc := run(modCode)
-			if status == EXIT_SUCCESS {
-				return acc
+		if modCode[i].Op == "nop" {
+			modCode[i] = Instruction{Op: "jmp", Arg: modCode[i].Arg}
+			vm.Load(modCode)
+			if vm.Run() == EXIT_SUCCESS {
+				return vm.Accumulator
 			}
 		}
 	}
 
-	return -1
+	panic("no solution")
 }
 
-func copyMap(m map[int]instr) map[int]instr {
-	c := make(map[int]instr, len(m))
+func copyMap(m map[int]Instruction) map[int]Instruction {
+	c := make(map[int]Instruction, len(m))
 	for k,v := range m {
 		c[k] = v
 	}
 	return c
-}
-
-var EXIT_INFINTE_LOOP = -1
-var EXIT_SUCCESS = 0
-func run(code map[int]instr) (int, int) {
-	acc := 0
-	pc := 0
-
-	run := make(map[int]bool)
-
-	for {
-		Printfln("%s %d", code[pc].op, code[pc].arg)
-		if pc >= len(code) {
-			return EXIT_SUCCESS, acc
-		}
-		if run[pc] {
-			return EXIT_INFINTE_LOOP, acc
-		}
-		run[pc] = true
-		switch code[pc].op {
-		case "nop":
-			pc++
-		case "acc":
-			acc += code[pc].arg
-			pc++
-		case "jmp":
-			pc += code[pc].arg
-		default:
-			panic(fmt.Sprintf("undefined opcode: %s", code[pc].op))
-		}
-	}
 }
