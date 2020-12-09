@@ -4,13 +4,17 @@ import (
 	. "aoc"
 	"fmt"
 	"sort"
+	"time"
 )
 
 func main() {
+	start := time.Now()
 	input := Ints(Input("day09/input.txt"))
 	firstInvalid := Solve1(input, 25)
-	fmt.Println(firstInvalid)
-	fmt.Println(Solve2(input, firstInvalid))
+	p2 := Solve2(input, firstInvalid)
+	fmt.Println(time.Since(start))
+	fmt.Println("p1:", firstInvalid)
+	fmt.Println("p2:", p2)
 }
 
 func Solve1(input []int, preambleSize int) int {

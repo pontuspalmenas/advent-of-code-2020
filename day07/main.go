@@ -9,8 +9,10 @@ type Rules map[string]map[string]int
 
 func main() {
 	input := Lines(Input("day07/input.txt"))
-	fmt.Println(Solve1(input))
-	fmt.Println(Solve2(input))
+	p1 := Solve1(input)
+	p2 := Solve2(input)
+	fmt.Println("p1:", p1)
+	fmt.Println("p2:", p2)
 }
 
 func Solve1(input []string) int {
@@ -46,12 +48,12 @@ func Solve2(input []string) int {
 }
 
 func count(rules Rules, list map[string]int, name string) int {
-	if val, ok := list[name]; ok {
-		return val
+	if list[name] > 0 {
+		return list[name]
 	}
 	sum := 0
-	for k, v := range rules[name] {
-		sum += v * (1 + count(rules, list, k)) // keep looking recursively
+	for childName, capacity := range rules[name] {
+		sum += capacity * (1 + count(rules, list, childName)) // keep looking recursively
 	}
 	list[name] = sum
 	return sum

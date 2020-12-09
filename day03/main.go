@@ -7,8 +7,10 @@ import (
 
 func main() {
 	input := Lines(Input("day03/input.txt"))
-	fmt.Println(Solve1(input))
-	fmt.Println(Solve2(input))
+	p1 := Solve1(input)
+	p2 := Solve2(input)
+	fmt.Println("p1:", p1)
+	fmt.Println("p2:", p2)
 }
 
 func Solve1(ss []string) int {
@@ -39,13 +41,6 @@ func Solve2(ss []string) int {
 }
 
 func draw(s string, x int) {
-	/*fmt.Print(s[0:x])
-	if s[x] == '#' {
-		fmt.Print("X")
-	} else {
-		fmt.Print("O")
-	}
-	fmt.Println(s[x+1:])*/
 	l := []rune(s)
 	if l[x] == '#' {
 		l[x] = 'X'

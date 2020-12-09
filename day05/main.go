@@ -9,8 +9,10 @@ import (
 
 func main() {
 	input := Lines(Input("day05/input.txt"))
-	fmt.Println(Solve1(input))
-	fmt.Println(Solve2(input))
+	p1 := Solve1(input)
+	p2 := Solve2(input)
+	fmt.Println("p1:", p1)
+	fmt.Println("p2:", p2)
 }
 
 func Solve1(input []string) int {
