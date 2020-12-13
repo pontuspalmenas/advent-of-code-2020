@@ -3,9 +3,10 @@ package aoc
 import (
 	"fmt"
 	"io/ioutil"
-	"os"
+	"math"
 	"reflect"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"testing"
@@ -15,6 +16,8 @@ type TestTable struct {
 	In  interface{}
 	Out interface{}
 }
+
+type T interface{}
 
 func AssertEq(t *testing.T, actual, expected interface{}) {
 	if !reflect.DeepEqual(actual, expected) {
@@ -43,6 +46,28 @@ func Lines(s string) []string {
 		ls = ls[:i-1]
 	}
 	return ls
+}
+
+func Sort(v T) T {
+	switch v.(type) {
+	case []int:
+		sort.Ints(v.([]int))
+		return v
+	}
+	panic(fmt.Sprintf("unhandled type: %v", reflect.TypeOf(v)))
+}
+
+func Reverse(v T) T {
+	switch v.(type) {
+	case []int:
+		ints := v.([]int)
+		rev := make([]int, len(ints))
+		for i:=len(ints)-1; i>0; i-- {
+			rev = append(rev, ints[i])
+		}
+		return v
+	}
+	panic(fmt.Sprintf("unhandled type: %v", reflect.TypeOf(v)))
 }
 
 func Ints(s string) []int {
@@ -84,14 +109,6 @@ func Sscanf(s string, format string, a ...interface{}) {
 	Check(err)
 }
 
-func Fscanf(path string, format string, a ...interface{}) {
-	file, err := os.Open(path)
-	Check(err)
-	defer file.Close()
-	_, err = fmt.Fscanf(file, format, a...)
-	Check(err)
-}
-
 func SplitByEmptyNewline(str string) []string {
 	s := strings.ReplaceAll(str, "\r\n", "\n")
 	return regexp.MustCompile(`\n\s*\n`).Split(s, -1)
@@ -124,4 +141,13 @@ func RegexAll(r string, s string) [][]string {
 	}
 
 	return out
+}
+
+type Point struct {
+	X int
+	Y int
+}
+
+func Manhattan(p1 Point, p2 Point) int {
+	return int(math.Abs(float64(p1.X - p2.X))) + int(math.Abs(float64(p1.Y - p2.Y)))
 }

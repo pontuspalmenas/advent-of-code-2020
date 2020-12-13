@@ -82,3 +82,16 @@ func TestFscanf(test *testing.T) {
 func TestPrintfln(t *testing.T) {
 	Printfln("%s %d", "hej", 555)
 }
+
+func TestManhattan(t *testing.T) {
+	p1 := Point{X: 3, Y: 4}
+	p2 := Point{X: 5, Y: 6}
+	actual := Manhattan(p1, p2)
+	AssertEq(t, actual, 4)
+}
+
+func TestSort(t *testing.T) {
+	unsorted := []int{3,1,7,3}
+	sorted := Sort(unsorted)
+	AssertEq(t, sorted, []int{1,3,3,7})
+}
