@@ -17,48 +17,48 @@ func main() {
 }
 
 func Solve1(input []string) int {
-	position := &Point{0,0}
+	p := &Point{}
 	dir := 90 // E
 	for _, s := range input {
 		var action rune
-		var size int
-		Sscanf(s, "%c%d", &action, &size)
+		var v int
+		Sscanf(s, "%c%d", &action, &v)
 		switch action {
 		case 'N':
-			north(position, size)
+			north(p, v)
 		case 'S':
-			south(position, size)
+			south(p, v)
 		case 'E':
-			east(position, size)
+			east(p, v)
 		case 'W':
-			west(position, size)
+			west(p, v)
 		case 'L':
-			dir = dir - size
+			dir = dir - v
 			if dir < 0 {
 				dir = 360 + dir
 			}
 		case 'R':
-			dir = (dir + size) % 360
+			dir = (dir + v) % 360
 			if dir < 0 {
 				dir = 360 + dir
 			}
 		case 'F':
 			switch dir {
 			case 0:
-				north(position, size)
+				north(p, v)
 			case 90:
-				east(position, size)
+				east(p, v)
 			case 180:
-				south(position, size)
+				south(p, v)
 			case 270:
-				west(position, size)
+				west(p, v)
 			default:
 				panic("unhandled position")
 			}
 		}
 	}
 
-	return Manhattan(Point{0,0}, *position)
+	return Manhattan(Point{}, *p)
 }
 
 func north(p *Point, distance int) {
@@ -78,5 +78,35 @@ func west(p *Point, distance int) {
 }
 
 func Solve2(input []string) int {
-	return 0
+	p := &Point{}
+	wp := &Point{X: 10, Y: 1}
+	for _, s := range input {
+		var action rune
+		var v int
+		Sscanf(s, "%c%d", &action, &v)
+		switch action {
+		case 'N':
+			north(wp, v)
+		case 'S':
+			south(wp, v)
+		case 'E':
+			east(wp, v)
+		case 'W':
+			west(wp, v)
+		case 'L':
+			for i := 0; i < v/90; i++ {
+				wp = &Point{X: -wp.Y, Y: wp.X}
+			}
+		case 'R':
+			for i := 0; i < v/90; i++ {
+				wp = &Point{X: wp.Y, Y: -wp.X}
+			}
+		case 'F':
+			for i := 0; i < v; i++ {
+				p = &Point{X: p.X + wp.X, Y: p.Y + wp.Y}
+			}
+		}
+	}
+
+	return Manhattan(Point{}, *p)
 }
