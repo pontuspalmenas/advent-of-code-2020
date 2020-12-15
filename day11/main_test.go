@@ -5,8 +5,7 @@ import (
 	"testing"
 )
 
-func Test1(test *testing.T) {
-	s:=
+const example =
 `L.LL.LL.LL
 LLLLLLL.LL
 L.L.L..L..
@@ -18,12 +17,10 @@ LLLLLLLLLL
 L.LLLLLL.L
 L.LLLLL.LL`
 
-	AssertEq(test, Solve1(Lines(s)), 37)
+func Test1(test *testing.T) {
+	AssertEq(test, Solve1(Lines(example)), 37)
 }
 
 func Test2(test *testing.T) {
-	s:=
-``
-
-	AssertEq(test, Solve2(Lines(s)), 0)
+	AssertEq(test, Solve2(Lines(example)), 26)
 }
