@@ -38,10 +38,12 @@ func Solve1(input []int) int {
 	return diffsOne * diffsThree
 }
 
-func fits(a, b int) bool {
-	return b-a <= 3
-}
-
 func Solve2(input []int) int {
+	input = append(input, 0) // add the outlet (0 jolts)
+	adaptors := []int{input[0] + 3}
+	adaptors = append(adaptors, input...)
+
+
+
 	return 0
 }
