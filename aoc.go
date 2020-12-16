@@ -37,6 +37,12 @@ func Int(s string) int {
 	return n
 }
 
+func Int64(s string) int64 {
+	n, err := strconv.ParseInt(s, 10, 64)
+	Check(err)
+	return n
+}
+
 func Lines(s string) []string {
 	ls := strings.Split(strings.ReplaceAll(s, "\r\n", "\n"), "\n")
 
