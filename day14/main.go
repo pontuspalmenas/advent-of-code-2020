@@ -18,19 +18,18 @@ func main() {
 	fmt.Println("p2:", p2)
 }
 
-const max = 65485
+const size = 65485+1
 
 func Solve1(input []string) int64 {
 	var mask string
-	//var mem [max+1]int64
-	mem := make([]int64, max+1)
+	mem := make([]int64, size)
 
 	for _, s := range input {
 		if strings.HasPrefix(s, "mask") {
 			mask = strings.Split(s, "mask = ")[1]
 		} else {
 			op := Regex(`mem\[(\d+)\] = (\d+)`, s)
-			mem[Int(op[0])] = binToInt(flip(pad(strToBin(op[1])), mask))
+			mem[Int(op[0])] = binToInt(flip(strToBin(op[1]), mask))
 		}
 	}
 
@@ -53,22 +52,13 @@ func flip(s string, mask string) string {
 }
 
 func strToBin(s string) string {
-	return strconv.FormatInt(Int64(s), 2)
+	return fmt.Sprintf("%036b", Int64(s))
 }
 
 func binToInt(s string) int64 {
 	n, err := strconv.ParseInt(s, 2, 64)
 	Check(err)
 	return n
-}
-
-func pad(s string) string {
-	s2 := ""
-	l := len(s)
-	if l < 36 {
-		s2 = strings.Repeat("0", 36-l)
-	}
-	return s2 + s
 }
 
 func sumMem(mem []int64) int64 {
@@ -79,6 +69,64 @@ func sumMem(mem []int64) int64 {
 	return sum
 }
 
-func Solve2(input []string) int {
-	return 0
+func Solve2(input []string) int64 {
+	var mask string
+	mem := make([]int64, size)
+	//floating := make([]int64, 36)
+
+
+	for _, s := range input {
+		if strings.HasPrefix(s, "mask") {
+			mask = strings.Split(s, "mask = ")[1]
+		} else {
+			op := Regex(`mem\[(\d+)\] = (\d+)`, s)
+			for _, addr := range addresses(strToBin(op[0]), mask) {
+				mem[Int(addr)] = Int64(op[1])
+			}
+		}
+	}
+
+	return sumMem(mem)
+}
+
+/*
+	takes an address in binary, returns all permutations given its mask, eg:
+	address: 000000000000000000000000000000101010  (decimal 42)
+	mask:    000000000000000000000000000000X1001X
+	gives:
+	000000000000000000000000000000011010  (decimal 26)
+	000000000000000000000000000000011011  (decimal 27)
+	000000000000000000000000000000111010  (decimal 58)
+	000000000000000000000000000000111011  (decimal 59)
+ */
+func addresses(addr string, mask string) []string {
+	out := make([]string, 0)
+	var result [36]rune
+	floating := make([]int, 0)
+
+	// apply mask
+	for i := range addr {
+		if mask[i] == 'X' {
+			result[i] = 'X'
+			floating = append(floating, i)
+		} else if mask[i] == '1' || addr[i] == '1' {
+			result[i] = '1'
+		} else {
+			result[i] = '0'
+		}
+	}
+
+	fmt.Println(string(result[:]))
+
+	newAddr := result
+	for _, i := range floating {
+		a := newAddr
+		a[i] = '0'
+		out = append(out, string(a[:]))
+		a[i] = '1'
+		out = append(out, string(a[:]))
+		newAddr = a
+	}
+
+	return out
 }

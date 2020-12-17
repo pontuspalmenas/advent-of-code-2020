@@ -86,6 +86,15 @@ func Ints(s string) []int {
 	return ints
 }
 
+func FindIntInSlice(slice []int, n int) int {
+	for i, s := range slice {
+		if s == n {
+			return i
+		}
+	}
+	return -1
+}
+
 func Min(a, b int) int {
 	if a < b {
 		return a

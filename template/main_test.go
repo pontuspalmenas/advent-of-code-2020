@@ -5,16 +5,16 @@ import (
 	"testing"
 )
 
-func Test1(test *testing.T) {
+func Test1(t *testing.T) {
 	s:=
 ``
 
-	AssertEq(test, Solve1(Ints(s)), 0)
+	AssertEq(t, Solve1(Ints(s)), 0)
 }
 
-func Test2(test *testing.T) {
+func Test2(t *testing.T) {
 	s:=
 ``
 
-	AssertEq(test, Solve2(Ints(s)), 0)
+	AssertEq(t, Solve2(Ints(s)), 0)
 }
