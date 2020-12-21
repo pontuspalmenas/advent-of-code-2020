@@ -166,3 +166,24 @@ type Point struct {
 func Manhattan(p1 Point, p2 Point) int {
 	return int(math.Abs(float64(p1.X - p2.X))) + int(math.Abs(float64(p1.Y - p2.Y)))
 }
+
+func Sum(ints []int) int {
+	sum := 0
+	for _, n := range ints {
+		sum += n
+	}
+	return sum
+}
+
+func Split(s string, sep string) []string {
+	return strings.Split(s, sep)
+}
+
+func SplitByComma(s string) (out []string) {
+	for _, n := range strings.Split(s, ",") {
+		out = append(out, strings.TrimSpace(n))
+	}
+
+	return out
+}
+

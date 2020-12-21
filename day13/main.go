@@ -22,13 +22,46 @@ func Solve1(input []string) int {
 
 	earliestBus, when := findBus(myDeparture, busses)
 
-	printSchedule(busses)
-
 	return (when-myDeparture)*earliestBus
 }
 
+type Bus struct {
+	id int
+	offset int
+}
+
 func Solve2(input []string) int {
-	return 0
+	busses := getBussesWithOffset(input[1])
+
+	t := 0
+	now := 1
+	used := NewIntSet()
+	found := false
+	for !found {
+		t += now
+		found = true
+		for _, bus := range busses {
+			if (t + bus.offset) % bus.id != 0 {
+				found = false
+				break
+			}
+			if !used.Contains(bus.id) {
+				used.Add(bus.id)
+				now = bus.id * now
+			}
+		}
+	}
+
+	return t
+}
+
+func getBussesWithOffset(in string) (busses []Bus) {
+	for i, s := range SplitByComma(in) {
+		if s != "x" {
+			busses = append(busses, Bus{Int(s), i})
+		}
+	}
+	return busses
 }
 
 func findBus(myDeparture int, busses []int) (int, int) {

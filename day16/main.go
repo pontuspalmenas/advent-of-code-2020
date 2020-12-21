@@ -53,15 +53,28 @@ func Solve2(input string) int {
 		fields = append(fields, parseField(r))
 	}
 
-	valid, _ := sortTickets(nearby, fields)
+	tickets, _ := sortTickets(nearby, fields)
 
-	var freeColumns []int
 	var mapped map[string]int
 	var revMap map[int]string
 
+	for _, t := range tickets {
+
+	}
 
 
 	return 0
+}
+
+func valueValidFor(fields []Field, v int) (valid []Field) {
+	for _, f := range fields {
+		if inRange(f, v) {
+			valid
+			break
+		}
+	}
+
+	return valid
 }
 
 func sortTickets(tickets []Ticket, fields []Field) (valid []Ticket, sumInvalid int) {
