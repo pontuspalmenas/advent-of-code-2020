@@ -17,7 +17,7 @@ func main() {
 }
 
 type P3 struct {
-	z,y,x int
+	z, y, x int
 }
 
 type Universe3 struct {
@@ -76,9 +76,9 @@ func Solve1(input []string) int {
 	for i, row := range input {
 		for j, col := range row {
 			if col == '#' {
-				u.set(P3{y: i, x: j, z:0})
+				u.set(P3{y: i, x: j, z: 0})
 			} else {
-				u.unset(P3{y: i, x: j, z:0})
+				u.unset(P3{y: i, x: j, z: 0})
 			}
 		}
 	}
