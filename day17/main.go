@@ -49,9 +49,9 @@ func (u *Universe3) count() int {
 
 func (u *Universe3) activeNeighbors(p P3) int {
 	count := 0
-	for z := p.z - 1; z <= p.z+1; z++ {
-		for y := p.y - 1; y <= p.y+1; y++ {
-			for x := p.x - 1; x <= p.x+1; x++ {
+	for z := p.z-1; z <= p.z+1; z++ {
+		for y := p.y-1; y <= p.y+1; y++ {
+			for x := p.x-1; x <= p.x+1; x++ {
 				np := P3{z: z, y: y, x: x}
 				if samePoint(p, np) {
 					continue
@@ -66,8 +66,7 @@ func (u *Universe3) activeNeighbors(p P3) int {
 }
 
 func (u *Universe3) active(p P3) bool {
-	on, ok := u.state[p]
-	return ok && on
+	return u.state[p]
 }
 
 func Solve1(input []string) int {
