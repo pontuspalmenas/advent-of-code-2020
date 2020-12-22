@@ -105,3 +105,8 @@ func TestSort(t *testing.T) {
 	sorted := Sort(unsorted)
 	AssertEq(t, sorted, []int{1,3,3,7})
 }
+
+func TestSplitByComma(t *testing.T) {
+	s := "foo, bar,baz" // handle both with and without whitespace
+	AssertEq(t, SplitByComma(s), []string{"foo","bar","baz"})
+}

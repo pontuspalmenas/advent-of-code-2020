@@ -15,7 +15,8 @@ func Test1(test *testing.T) {
 
 func Test2(test *testing.T) {
 	s:=
-``
+`939
+67,7,x,59,61`
 
-	AssertEq(test, Solve2(Lines(s)), 0)
+	AssertEq(test, Solve2(Lines(s)), 1261476)
 }
