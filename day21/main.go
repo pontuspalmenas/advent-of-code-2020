@@ -53,8 +53,6 @@ func Solve1(input []string) int {
 	// reduce candidates to one ingredient per allergen
 	safe := NewStringSet()
 
-
-
 	// count safe in ingredients
 	count := 0
 	//safe = ToStringSet([]string{"kfcds","nhms","sbzzf","trh"})

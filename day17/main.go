@@ -86,6 +86,7 @@ func Solve1(input []string) int {
 	size := len(input[0])
 
 	for gen := 1; gen <= 6; gen++ {
+		newState := u.NewState()
 		for z := -gen; z <= gen; z++ {
 			for y := -gen; y < size+gen; y++ {
 				for x := -gen; x < size+gen; x++ {
@@ -93,19 +94,28 @@ func Solve1(input []string) int {
 					activeNs := u.activeNeighbors(p)
 					if u.active(p) {
 						if !(activeNs == 2 || activeNs == 3) {
-							u.unset(p)
+							newState[p] = false
 						}
 					} else {
 						if activeNs == 3 {
-							u.set(p)
+							newState[p] = true
 						}
 					}
 				}
 			}
 		}
+		u.state = newState
 	}
 
 	return u.count()
+}
+
+func (u *Universe3) NewState() map[P3]bool {
+	newState := make(map[P3]bool)
+	for k, v := range u.state {
+		newState[k] = v
+	}
+	return newState
 }
 
 func Solve2(input []string) int {
