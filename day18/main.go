@@ -49,7 +49,7 @@ func Solve1(input []string) int {
 	sum := 0
 	for _, s := range input {
 		s = strings.ReplaceAll(s, " ", "")
-		sum += eval(s, part1)
+		sum += eval(s, false)
 	}
 	return sum
 }
@@ -58,55 +58,61 @@ func Solve2(input []string) int {
 	sum := 0
 	for _, s := range input {
 		s = strings.ReplaceAll(s, " ", "")
-		sum += eval(s, part2)
+		sum += eval(s, true)
 	}
 	return sum
 }
 
-func eval(s string, condition func(*Stack) bool) int {
+func eval(s string, p2 bool) int {
 	values := NewStack()
 	ops := NewStack()
 	ops.push(Lpn)
 
 	for _, c := range s {
 		if c == '+' {
-			calc(ops, values, condition)
+			if p2 {
+				p2add(ops, values)
+			} else {
+				calc(ops, values)
+			}
 			ops.push(Add)
 		} else if c == '*' {
-			calc(ops, values, condition)
+			calc(ops, values)
 			ops.push(Mul)
 		} else if c == '(' {
 			ops.push(Lpn)
 		} else if c == ')' {
-			calc(ops, values, condition)
+			calc(ops, values)
 			ops.pop()
 		} else {
 			values.push(Int(string(c)))
 		}
 	}
 
-	calc(ops, values, condition)
+	calc(ops, values)
 	return values.pop()
 }
 
-func part1(ops *Stack) bool {
-	return ops.peek() != Lpn
+func calc(ops *Stack, values *Stack) {
+	for ops.peek() != Lpn {
+		doCalc(ops, values)
+	}
 }
 
-func part2(ops *Stack) bool {
-	return !(ops.peek() == Lpn || ops.peek() == Mul)
+func p2add(ops *Stack, values *Stack) {
+	for ops.peek() != Lpn && ops.peek() != Mul {
+		doCalc(ops, values)
+	}
 }
 
-func calc(ops *Stack, values *Stack, condition func(*Stack) bool) {
-	for condition(ops) {
-		op := ops.pop()
-		v1 := values.pop()
-		v2 := values.pop()
-		if op == Add {
-			values.push(v1 + v2)
-		} else if op == Mul {
-			values.push(v1 * v2)
-		}
+func doCalc(ops *Stack, values *Stack) {
+	op := ops.pop()
+	v1 := values.pop()
+	v2 := values.pop()
+	if op == Add {
+		values.push(v1 + v2)
+	} else if op == Mul {
+		values.push(v1 * v2)
 	}
 }
 
