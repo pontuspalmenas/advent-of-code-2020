@@ -52,6 +52,7 @@ func Solve1(input []string) int {
 
 	// reduce candidates to one ingredient per allergen
 	safe := NewStringSet()
+	panic("go reduce, lazy man")
 
 	// count safe in ingredients
 	count := 0

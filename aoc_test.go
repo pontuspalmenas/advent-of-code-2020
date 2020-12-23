@@ -47,12 +47,6 @@ func TestLines(test *testing.T) {
 	AssertEq(test, actual, expected)
 }
 
-func TestChrAt(test *testing.T) {
-	actual := ChrAt("abc123", 2)
-	expected := "c"
-	AssertEq(test, actual, expected)
-}
-
 func TestSscanf(test *testing.T) {
 	var n1 int
 	var n2 int
@@ -98,12 +92,6 @@ func TestManhattan(t *testing.T) {
 	p2 := Point{X: 5, Y: 6}
 	actual := Manhattan(p1, p2)
 	AssertEq(t, actual, 4)
-}
-
-func TestSort(t *testing.T) {
-	unsorted := []int{3,1,7,3}
-	sorted := Sort(unsorted)
-	AssertEq(t, sorted, []int{1,3,3,7})
 }
 
 func TestSplitByComma(t *testing.T) {

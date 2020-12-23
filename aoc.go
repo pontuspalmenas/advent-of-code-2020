@@ -6,7 +6,6 @@ import (
 	"math"
 	"reflect"
 	"regexp"
-	"sort"
 	"strconv"
 	"strings"
 	"testing"
@@ -54,28 +53,6 @@ func Lines(s string) []string {
 	return ls
 }
 
-func Sort(v T) T {
-	switch v.(type) {
-	case []int:
-		sort.Ints(v.([]int))
-		return v
-	}
-	panic(fmt.Sprintf("unhandled type: %v", reflect.TypeOf(v)))
-}
-
-func Reverse(v T) T {
-	switch v.(type) {
-	case []int:
-		ints := v.([]int)
-		rev := make([]int, len(ints))
-		for i:=len(ints)-1; i>0; i-- {
-			rev = append(rev, ints[i])
-		}
-		return v
-	}
-	panic(fmt.Sprintf("unhandled type: %v", reflect.TypeOf(v)))
-}
-
 func Ints(s string) []int {
 	var ints []int
 	re := regexp.MustCompile(`-?\d+`)
@@ -113,10 +90,6 @@ func Check(err error) {
 	if err != nil {
 		panic(err)
 	}
-}
-
-func ChrAt(s string, i int) string {
-	return s[i:i+1]
 }
 
 func Sscanf(s string, format string, a ...interface{}) {
