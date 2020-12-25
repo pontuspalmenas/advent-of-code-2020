@@ -30,15 +30,7 @@ func Solve1(input []string) int {
 	}
 
 	value = 1
-	for i := 1; ; i++ {
-		value *= 7
-		value %= 20201227
-		if value == doorPubKey {
-			break
-		}
-	}
-
-	for i := 1; i < cardLoopSize; i++ {
+	for i := 1; i <= cardLoopSize; i++ {
 		value *= doorPubKey
 		value %= 20201227
 	}
