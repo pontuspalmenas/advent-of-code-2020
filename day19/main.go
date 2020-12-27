@@ -6,7 +6,6 @@ import (
 	"regexp"
 	"strings"
 	"time"
-	
 )
 
 func main() {
@@ -38,21 +37,15 @@ func Solve1(input []string) int {
 
 func Solve2(input []string) int {
 	rules := parseRules(Lines(input[0]))
+	// taddeus hack
 	rules[8] = "42 +"
-	rules[11] = "(?P<R> 42 (?&R)? 31 )" //
-	messages := input[1]
+	rules[11] = "(?P<R> 42 (?&R)? 31 )"
 
 	regex := fmt.Sprintf("^%s$", expand(rules, "0"))
-	r := regexp.MustCompile(regex)
 
-	valid := 0
-	for _, s := range Lines(messages) {
-		if r.MatchString(s) {
-			valid++
-		}
-	}
+	Printfln("Golang doesn't support PCRE. Paste this into regex101.com along with messages: %s", regex)
 
-	return valid
+	return -1
 }
 
 func expand(rules map[int]string, val string) string {
