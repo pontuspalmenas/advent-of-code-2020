@@ -160,3 +160,8 @@ func SplitByComma(s string) (out []string) {
 	return out
 }
 
+func IsNumber(s string) bool {
+	_, err := strconv.Atoi(s)
+	return err == nil
+}
+
