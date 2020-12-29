@@ -2,6 +2,7 @@ package main
 
 import (
 	. "aoc"
+	"aoc/types"
 	"fmt"
 	"strings"
 	"time"
@@ -38,7 +39,7 @@ func Solve1(input []string) int {
 	}
 
 	// find candidates for safe ingredients
-	candidates := NewStringSet()
+	candidates := types.NewStringSet()
 	for _, list := range allergenToIngredients {
 		for _, ingredients := range list {
 			for _, ingredient := range ingredients {
@@ -51,7 +52,7 @@ func Solve1(input []string) int {
 	}
 
 	// reduce candidates to one ingredient per allergen
-	safe := NewStringSet()
+	safe := types.NewStringSet()
 	panic("go reduce, lazy man")
 
 	// count safe in ingredients

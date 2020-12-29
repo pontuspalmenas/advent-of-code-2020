@@ -1,4 +1,4 @@
-package aoc
+package types
 
 type StringSet struct {
 	m map[string]struct{}

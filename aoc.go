@@ -165,3 +165,7 @@ func IsNumber(s string) bool {
 	return err == nil
 }
 
+func Panic(format string, a ...interface{}) {
+	panic(fmt.Sprintf(format, a...))
+}
+

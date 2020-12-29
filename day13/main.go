@@ -2,6 +2,7 @@ package main
 
 import (
 	. "aoc"
+	"aoc/types"
 	"fmt"
 	"time"
 )
@@ -35,7 +36,7 @@ func Solve2(input []string) int {
 
 	t := 0
 	now := 1
-	used := NewIntSet()
+	used := types.NewIntSet()
 	found := false
 	for !found {
 		t += now
