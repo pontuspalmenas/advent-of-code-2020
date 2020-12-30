@@ -2,6 +2,7 @@ package main
 
 import (
 	. "aoc"
+	. "aoc/types"
 	"fmt"
 	"strconv"
 	"strings"
@@ -38,8 +39,6 @@ func Solve1(input []string) int64 {
 
 func flip(s string, mask string) string {
 	result := ""
-	//Printfln("value:\t%s\t(decimal %d)", s, binToInt(s))
-	//Printfln("mask:\t%s", mask)
 	for i, m := range mask {
 		if m == 'X' {
 			result += string(s[i])
@@ -47,7 +46,6 @@ func flip(s string, mask string) string {
 			result += string(m)
 		}
 	}
-	//Printfln("result:\t%s\t(decimal %d)", result, binToInt(result))
 	return result
 }
 
@@ -71,22 +69,25 @@ func sumMem(mem []int64) int64 {
 
 func Solve2(input []string) int64 {
 	var mask string
-	mem := make([]int64, size)
-	//floating := make([]int64, 36)
-
+	mem := make(map[int64]int64)
 
 	for _, s := range input {
 		if strings.HasPrefix(s, "mask") {
 			mask = strings.Split(s, "mask = ")[1]
 		} else {
 			op := Regex(`mem\[(\d+)\] = (\d+)`, s)
-			for _, addr := range addresses(strToBin(op[0]), mask) {
-				mem[Int(addr)] = Int64(op[1])
+			addrs := addresses(strToBin(op[0]), mask)
+			for _, addr := range addrs {
+				mem[binToInt(addr)] = Int64(op[1])
 			}
 		}
 	}
 
-	return sumMem(mem)
+	var sum int64
+	for _, v := range mem {
+		sum += v
+	}
+	return sum
 }
 
 /*
@@ -100,11 +101,48 @@ func Solve2(input []string) int64 {
 	000000000000000000000000000000111011  (decimal 59)
  */
 func addresses(addr string, mask string) []string {
-	out := make([]string, 0)
+	// todo: clean up this... mess.
+	var result [36]rune
+	floating := make([]int, 0)
 
-	if !strings.Contains(addr, "X") {
-		return addr
+	// apply mask
+	for i := range addr {
+		if mask[i] == 'X' {
+			result[i] = 'X'
+			floating = append(floating, i)
+		} else if mask[i] == '1' || addr[i] == '1' {
+			result[i] = '1'
+		} else {
+			result[i] = '0'
+		}
 	}
 
-	return out
+	tempAddr := ""
+	for _, r := range result {
+		tempAddr += string(r)
+	}
+	addrs := NewStringSet()
+	addrs.Add(tempAddr)
+
+	for containsWildcard(addrs.ToSlice()) {
+		for _, addr := range addrs.ToSlice() {
+			if !strings.Contains(addr, "X") {
+				continue
+			}
+			addrs.Remove(addr)
+			addrs.Add(strings.Replace(addr, "X", "0", 1))
+			addrs.Add(strings.Replace(addr, "X", "1", 1))
+		}
+	}
+
+	return addrs.ToSlice()
+}
+
+func containsWildcard(addrs []string) bool {
+	for _, a := range addrs {
+		if strings.Contains(a, "X") {
+			return true
+		}
+	}
+	return false
 }

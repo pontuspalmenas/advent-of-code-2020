@@ -31,8 +31,18 @@ func TestAddresses(t *testing.T) {
 	addr := "000000000000000000000000000000101010"
 	mask := "000000000000000000000000000000X1001X"
 	floating := addresses(addr, mask)
-	AssertEq(t, floating[0], "000000000000000000000000000000011010")
-	AssertEq(t, floating[1], "000000000000000000000000000000011011")
-	AssertEq(t, floating[2], "000000000000000000000000000000111010")
-	AssertEq(t, floating[3], "000000000000000000000000000000111011")
+	AssertEq(t, len(floating), 4)
+	AssertEq(t, contains(floating, "000000000000000000000000000000011010"), true)
+	AssertEq(t, contains(floating, "000000000000000000000000000000011011"), true)
+	AssertEq(t, contains(floating, "000000000000000000000000000000111010"), true)
+	AssertEq(t, contains(floating, "000000000000000000000000000000111011"), true)
+}
+
+func contains(haystack []string, needle string) bool {
+	for _, s := range haystack {
+		if s == needle {
+			return true
+		}
+	}
+	return false
 }
