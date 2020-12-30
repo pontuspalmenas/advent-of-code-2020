@@ -101,31 +101,9 @@ func Solve2(input []string) int64 {
  */
 func addresses(addr string, mask string) []string {
 	out := make([]string, 0)
-	var result [36]rune
-	floating := make([]int, 0)
 
-	// apply mask
-	for i := range addr {
-		if mask[i] == 'X' {
-			result[i] = 'X'
-			floating = append(floating, i)
-		} else if mask[i] == '1' || addr[i] == '1' {
-			result[i] = '1'
-		} else {
-			result[i] = '0'
-		}
-	}
-
-	fmt.Println(string(result[:]))
-
-	newAddr := result
-	for _, i := range floating {
-		a := newAddr
-		a[i] = '0'
-		out = append(out, string(a[:]))
-		a[i] = '1'
-		out = append(out, string(a[:]))
-		newAddr = a
+	if !strings.Contains(addr, "X") {
+		return addr
 	}
 
 	return out

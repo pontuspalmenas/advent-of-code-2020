@@ -148,6 +148,16 @@ func Sum(ints []int) int {
 	return sum
 }
 
+func MaxInts(ints []int) int {
+	max := ints[0]
+	for _, n := range ints {
+		if n > max {
+			max = n
+		}
+	}
+	return max
+}
+
 func Split(s string, sep string) []string {
 	return strings.Split(s, sep)
 }

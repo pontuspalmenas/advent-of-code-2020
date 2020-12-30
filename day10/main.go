@@ -3,6 +3,7 @@ package main
 import (
 	. "aoc"
 	"fmt"
+	"sort"
 	"time"
 )
 
@@ -39,11 +40,22 @@ func Solve1(input []int) int {
 }
 
 func Solve2(input []int) int {
-	input = append(input, 0) // add the outlet (0 jolts)
-	adaptors := []int{input[0] + 3}
-	adaptors = append(adaptors, input...)
+	adaptors := append(input, MaxInts(input)+3, 0)
+	sort.Ints(adaptors)
 
+	table := make([]int, len(adaptors))
+	table[0] = 1 // base case => one way to get to 0
 
+	for i := 1; i < len(adaptors); i++ {
+		current := adaptors[i]
+		for j := i-1; j >= 0; j-- {
+			if current - adaptors[j] <= 3 {
+				table[i] += table[j]
+			} else {
+				break
+			}
+		}
+	}
 
-	return 0
+	return table[len(table)-1]
 }
