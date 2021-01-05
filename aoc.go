@@ -16,8 +16,6 @@ type TestTable struct {
 	Out interface{}
 }
 
-type T interface{}
-
 func AssertEq(t *testing.T, actual, expected interface{}) {
 	if !reflect.DeepEqual(actual, expected) {
 		t.Errorf("Actual: %v; Expected: %v", actual, expected)

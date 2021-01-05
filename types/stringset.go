@@ -1,5 +1,7 @@
 package types
 
+import "fmt"
+
 type StringSet struct {
 	m map[string]struct{}
 }
@@ -63,4 +65,8 @@ func (s *StringSet) Union(s2 *StringSet) *StringSet {
 		out.Add(v)
 	}
 	return out
+}
+
+func (s *StringSet) String() string {
+	return fmt.Sprintf("%v", s.ToSlice())
 }

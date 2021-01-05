@@ -2,6 +2,7 @@ package main
 
 import (
 	. "aoc"
+	. "aoc/types"
 	"fmt"
 	"time"
 )
@@ -55,26 +56,41 @@ func Solve2(input string) int {
 
 	tickets, _ := sortTickets(nearby, fields)
 
-	var mapped map[string]int
-	var revMap map[int]string
+	println(len(tickets))
+	//mapped := make(map[string]int)
+	var unmapped []string
 
-	for _, t := range tickets {
-
+	// find candidates
+	candidates := make(map[int]*StringSet)
+	for i := 0; i <= len(tickets[0])-1; i++ {
+		candidates[i] = NewStringSet()
 	}
 
+	for _, t := range tickets {
+		for i, v := range t {
+			candidates[i] = candidates[i].Union(candidatesForIndex(fields, v))
+		}
+	}
+	// debug
+	for k, v := range candidates {
+		Printfln("%d -> %v", k, v)
+	}
+
+	for _, f := range fields {
+		unmapped = append(unmapped, f.name)
+	}
 
 	return 0
 }
 
-func valueValidFor(fields []Field, v int) (valid []Field) {
+func candidatesForIndex(fields []Field, value int) *StringSet {
+	set := NewStringSet()
 	for _, f := range fields {
-		if inRange(f, v) {
-			valid
-			break
+		if inRange(f, value) {
+			set.Add(f.name)
 		}
 	}
-
-	return valid
+	return set
 }
 
 func sortTickets(tickets []Ticket, fields []Field) (valid []Ticket, sumInvalid int) {
