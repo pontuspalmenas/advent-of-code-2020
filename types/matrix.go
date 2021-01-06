@@ -17,67 +17,74 @@ func NewMatrix(width, height int) Matrix {
 	return Matrix{data: d}
 }
 
-func (t *Matrix) Flip() {
-
+func (m *Matrix) Flip() {
+	for i:=0; i< m.Height(); i++ {
+		for j:=0; j< m.Width()/2; j++ {
+			c := m.data[i][j]
+			m.data[i][j] = m.data[i][len(m.data[i])-1-j]
+			m.data[i][len(m.data[i])-1-j] = c
+		}
+	}
 }
 
 // Rotates the Matrix 90 degrees clockwise
-func (t *Matrix) Rotate() {
-	if t.Width() != t.Height() {
+// todo: do in-place rotation, this is O(n^2) space
+func (m *Matrix) Rotate() {
+	if m.Width() != m.Height() {
 		Panic("Rotate: unsupported NxM matrix")
 	}
 
-	n := t.Height()
+	n := m.Height()
 
-	d := make([][]int, t.Height())
-	for i:=0; i<t.Height(); i++ {
-		d[i] = make([]int, t.Width())
+	d := make([][]int, m.Height())
+	for i:=0; i< m.Height(); i++ {
+		d[i] = make([]int, m.Width())
 	}
 
 	for i:=0; i<n;i++ {
 		for j:=0; j<n;j++ {
-			d[i][j] = t.data[n - j - 1][i]
+			d[i][j] = m.data[n - j - 1][i]
 		}
 	}
 
-	t.data = Copy2DIntSlice(d)
+	m.data = Copy2DIntSlice(d)
 }
 
 // Returns the state at point p
-func (t *Matrix) At(p Point) int {
-	t.checkBounds(p)
-	return t.data[p.Y][p.X]
+func (m *Matrix) At(p Point) int {
+	m.checkBounds(p)
+	return m.data[p.Y][p.X]
 }
 
 // Sets the state at point p
-func (t *Matrix) Set(p Point, v int) {
-	t.checkBounds(p)
-	t.data[p.Y][p.X] = v
+func (m *Matrix) Set(p Point, v int) {
+	m.checkBounds(p)
+	m.data[p.Y][p.X] = v
 }
 
 // Returns a printable Matrix
 // todo: print ints as numbers, not their rune. but that breaks Tile.String()...
-func (t *Matrix) String() string {
+func (m *Matrix) String() string {
 	out := ""
-	for y := 0; y <= t.Height()-1; y++ {
-		for x := 0; x <= t.Width()-1; x++ {
-			out += string(rune(t.data[y][x]))
+	for y := 0; y <= m.Height()-1; y++ {
+		for x := 0; x <= m.Width()-1; x++ {
+			out += string(rune(m.data[y][x]))
 		}
 		out += "\n"
 	}
 	return out
 }
 
-func (t *Matrix) checkBounds(p Point) {
-	if p.X < 0 || p.X > t.Width() - 1 || p.Y < 0 || p.Y > t.Height() - 1 {
+func (m *Matrix) checkBounds(p Point) {
+	if p.X < 0 || p.X > m.Width() - 1 || p.Y < 0 || p.Y > m.Height() - 1 {
 		Panic("point out of bounds: %v", p)
 	}
 }
 
-func (t *Matrix) Width() int {
-	return len(t.data[0])
+func (m *Matrix) Width() int {
+	return len(m.data[0])
 }
 
-func (t *Matrix) Height() int {
-	return len(t.data)
+func (m *Matrix) Height() int {
+	return len(m.data)
 }

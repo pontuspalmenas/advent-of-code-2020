@@ -17,8 +17,6 @@ func main() {
 	fmt.Println("p2:", p2)
 }
 
-const TileSize = 10
-
 func Solve1(input []string) int {
 	tiles := parseInput(input)
 	for _, t := range tiles {
@@ -34,15 +32,7 @@ func Solve2(input []string) int {
 func parseInput(blocks []string) []Tile {
 	var tiles []Tile
 	for _, b := range blocks {
-		lines := Lines(b)
-		tile := NewTile(Int(Regex(`Tile (\d+)`, lines[0])[0]), TileSize, TileSize)
-		lines = lines[1:]
-		for i := 0; i <= TileSize-1; i++ {
-			for j := 0; j <= TileSize-1; j++ {
-				tile.Set(Point{j, i}, rune(lines[i][j]))
-			}
-		}
-		tiles = append(tiles, tile)
+		tiles = append(tiles, NewTileFromString(b))
 	}
 	return tiles
 }
