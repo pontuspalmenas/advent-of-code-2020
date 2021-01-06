@@ -57,6 +57,7 @@ func load(input []string) *PointSet {
 			p.X += dir.dx
 			p.Y	+= dir.dy
 		}
+		// landed on same position, flip it
 		if blacks.Contains(p) {
 			blacks.Remove(p)
 		} else {

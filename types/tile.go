@@ -38,7 +38,7 @@ func NewTileFromString(s string) Tile {
 	lines = lines[1:]
 	for i := 0; i <= h-1; i++ {
 		for j := 0; j <= w-1; j++ {
-			tile.Set(Point{j, i}, rune(lines[i][j]))
+			tile.Set(Point{X: j, Y: i}, rune(lines[i][j]))
 		}
 	}
 	return tile
@@ -83,3 +83,42 @@ func (t *Tile) Height() int {
 	return t.matrix.Height()
 }
 
+func (t *Tile) BorderTop() string {
+	out := ""
+	for i:=0; i<=t.Width()-1; i++ {
+		out += string(t.At(Point{X: i}))
+	}
+	return out
+}
+
+func (t *Tile) BorderBottom() string {
+	out := ""
+	for i:=0; i<=t.Width()-1; i++ {
+		out += string(t.At(Point{X: i, Y: t.Height()-1}))
+	}
+	return out
+}
+
+func (t *Tile) BorderLeft() string {
+	out := ""
+	for i:=0; i<=t.Width()-1; i++ {
+		out += string(t.At(Point{Y: i}))
+	}
+	return out
+}
+
+func (t *Tile) BorderRight() string {
+	out := ""
+	for i:=0; i<=t.Width()-1; i++ {
+		out += string(t.At(Point{X: t.Height()-1, Y: i}))
+	}
+	return out
+}
+
+func (t *Tile) Column(row int) string {
+	out := ""
+	for i:=0; i <= t.Width()-1; i++ {
+		out += string(t.At(Point{X: i, Y: row}))
+	}
+	return out
+}
