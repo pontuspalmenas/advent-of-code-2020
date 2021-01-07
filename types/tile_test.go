@@ -39,6 +39,29 @@ func TestTile_Rotate(t *testing.T) {
 	AssertEq(t, tile.String(), expected)
 }
 
+func TestTile_Variations(t *testing.T) {
+	input :=
+		`Tile 3:
+1234
+5678
+9012
+3456
+`
+	tile := NewTileFromString(input)
+	variations := tile.Variations()
+
+	seen := NewStringSet()
+	for _, tt := range variations {
+		s := tt.String()
+		if seen.Contains(s) {
+			t.Fatal("Non-unique tile variation")
+		}
+		seen.Add(s)
+	}
+
+	AssertEq(t, len(variations), 8)
+}
+
 func TestTile_Borders(t *testing.T) {
 	input :=
 `Tile 4:

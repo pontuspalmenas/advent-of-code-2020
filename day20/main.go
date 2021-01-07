@@ -20,6 +20,9 @@ func main() {
 
 type Board struct {
 	tiles [][]*Tile
+
+	// can be calculated as we go, but this makes the code cleaner
+	dim int
 	usedH int
 	usedW int
 }
@@ -31,7 +34,7 @@ func NewBoard(size int) *Board {
 	for i:=0; i<dim; i++ {
 		tiles[i] = make([]*Tile, dim)
 	}
-	return &Board{tiles: tiles}
+	return &Board{tiles: tiles, dim: dim}
 }
 
 func (b *Board) Place(t Tile) {
@@ -75,10 +78,12 @@ func (b *Board) Print() {
 func Solve1(input []string) int {
 	tiles := parseInput(input)
 	board := NewBoard(len(tiles))
+	variations := tileVariations(tiles)
+	Printfln("variations: %d", len(variations))
 	for _, t := range tiles {
 		board.Place(t)
 	}
-	board.Print()
+	//board.Print()
 
 	return 0
 }
@@ -93,4 +98,12 @@ func parseInput(blocks []string) []Tile {
 		tiles = append(tiles, NewTileFromString(b))
 	}
 	return tiles
+}
+
+func tileVariations(tiles []Tile) []Tile {
+	var variations []Tile
+	for _, t := range tiles {
+		variations = append(variations, t.Variations()...)
+	}
+	return variations
 }

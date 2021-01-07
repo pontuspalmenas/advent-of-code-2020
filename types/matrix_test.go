@@ -5,6 +5,18 @@ import (
 	"testing"
 )
 
+func TestMatrix_Copy(t *testing.T) {
+	m := NewMatrix(4,4)
+	m.data = [][]int{
+		{0,0,0,0},
+		{1,1,1,1},
+		{2,2,2,2},
+		{3,3,3,3}}
+
+	m2 := m.Copy()
+	aoc.AssertEq(t, m.data, m2.data)
+}
+
 func TestMatrix_Flip(t *testing.T) {
 	m := NewMatrix(4,4)
 	m.data = [][]int{

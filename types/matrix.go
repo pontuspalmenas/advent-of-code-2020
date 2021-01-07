@@ -17,6 +17,16 @@ func NewMatrix(width, height int) Matrix {
 	return Matrix{data: d}
 }
 
+func (m *Matrix) Copy() *Matrix {
+	d := make([][]int, m.Height())
+	for i:=0; i< m.Height(); i++ {
+		d[i] = make([]int, m.Width())
+	}
+
+	d = Copy2DIntSlice(m.data)
+	return &Matrix{data: d}
+}
+
 func (m *Matrix) Flip() {
 	for i:=0; i< m.Height(); i++ {
 		for j:=0; j< m.Width()/2; j++ {

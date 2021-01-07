@@ -44,6 +44,10 @@ func NewTileFromString(s string) Tile {
 	return tile
 }
 
+func (t *Tile) Copy() *Tile {
+	return &Tile{t.ID, t.matrix.Copy()}
+}
+
 func (t *Tile) Flip() {
 	t.matrix.Flip()
 }
@@ -121,4 +125,19 @@ func (t *Tile) Column(row int) string {
 		out += string(t.At(Point{X: i, Y: row}))
 	}
 	return out
+}
+
+func (t *Tile) Variations() []Tile {
+	var variations []Tile
+
+	// Rotate three times, flip and rotate three times again
+	for i:=0; i<2; i++ {
+		variations = append(variations, *t.Copy())
+		for j := 0; j < 3; j++ {
+			t.Rotate()
+			variations = append(variations, *t.Copy())
+		}
+		t.Flip()
+	}
+	return variations
 }
