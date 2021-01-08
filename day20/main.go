@@ -5,6 +5,7 @@ import (
 	. "aoc/types"
 	"fmt"
 	"math"
+	"os"
 	"time"
 )
 
@@ -20,11 +21,7 @@ func main() {
 
 type Board struct {
 	tiles [][]*Tile
-
-	// can be calculated as we go, but this makes the code cleaner
 	dim int
-	usedH int
-	usedW int
 }
 
 // Creates a Board with "NxN=size" dimensions
@@ -37,28 +34,39 @@ func NewBoard(size int) *Board {
 	return &Board{tiles: tiles, dim: dim}
 }
 
-func (b *Board) Place(t Tile) {
-	b.tiles[b.usedH][b.usedW] = &t
-	b.usedW++
-	if b.usedW > len(b.tiles[0])-1 {
-		b.usedW = 0
-		b.usedH++
+// Fill the board by recursively checking every possible placement using pre-generated tile variations (8*N).
+func (b *Board) Fill(row int, col int, allTiles []Tile, visited *IntSet) {
+	// We've reached the end
+	if row == b.dim {
+		Printfln("P1: %d", b.tiles[0][0].ID *
+			b.tiles[0][b.dim-1].ID *
+			b.tiles[b.dim-1][0].ID *
+			b.tiles[b.dim-1][b.dim-1].ID)
+		os.Exit(0)
 	}
-}
+	for _, t := range allTiles {
+		if visited.Contains(t.ID) {
+			continue
+		}
+		// Check if we can place it below us
+		if row > 0 && b.tiles[row-1][col].BorderBottom() != t.BorderTop() {
+			continue
+		}
+		// Check if we can place it next to us
+		if col > 0 && b.tiles[row][col-1].BorderRight() != t.BorderLeft() {
+			continue
+		}
+		b.tiles[row][col] = &t
 
-func (b *Board) AllLinedUp() bool {
-	return false
-}
-
-func (b *Board) LinedUp(side string, t1 Tile, t2 Tile) bool {
-	switch side {
-	case "left":
-	case "right":
-	case "top":
-	case "bottom":
+		visited.Add(t.ID)
+		if col == b.dim-1 {
+			b.Fill(row+1, 0, allTiles, visited)
+		} else {
+			b.Fill(row, col+1, allTiles, visited)
+		}
+		// We've hit a dead end, go back and try again
+		visited.Remove(t.ID)
 	}
-
-	return false
 }
 
 func (b *Board) Print() {
@@ -79,13 +87,15 @@ func Solve1(input []string) int {
 	tiles := parseInput(input)
 	board := NewBoard(len(tiles))
 	variations := tileVariations(tiles)
-	Printfln("variations: %d", len(variations))
-	for _, t := range tiles {
-		board.Place(t)
-	}
+	visited := NewIntSet()
+	board.Fill(0, 0, variations, visited)
+
 	//board.Print()
 
-	return 0
+	return board.tiles[0][0].ID *
+		board.tiles[0][board.dim-1].ID *
+		board.tiles[board.dim-1][0].ID *
+		board.tiles[board.dim-1][board.dim-1].ID
 }
 
 func Solve2(input []string) int {
