@@ -6,17 +6,15 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"sort"
 	"time"
 )
 
 func main() {
 	start := time.Now()
 	input := SplitByEmptyNewline(Input("day20/input.txt"))
-	p1 := Solve1(input)
-	p2 := Solve2(input)
+	Solve(input)
 	fmt.Println(time.Since(start))
-	fmt.Println("p1:", p1)
-	fmt.Println("p2:", p2)
 }
 
 type Board struct {
@@ -35,13 +33,19 @@ func NewBoard(size int) *Board {
 }
 
 // Fill the board by recursively checking every possible placement using pre-generated tile variations (8*N).
-func (b *Board) Fill(row int, col int, allTiles []Tile, visited *IntSet) {
+func (b *Board) FillAndSolve(row int, col int, allTiles []Tile, visited *IntSet) {
 	// We've reached the end
 	if row == b.dim {
-		Printfln("P1: %d", b.tiles[0][0].ID *
+		p1 := b.tiles[0][0].ID *
 			b.tiles[0][b.dim-1].ID *
 			b.tiles[b.dim-1][0].ID *
-			b.tiles[b.dim-1][b.dim-1].ID)
+			b.tiles[b.dim-1][b.dim-1].ID
+
+		p2 := b.findMonsters()
+		Printfln("P1: %d", p1)
+		Printfln("P2: %d", p2)
+
+		// Todo: resolve backtracking efficiently without os.Exit()
 		os.Exit(0)
 	}
 	for _, t := range allTiles {
@@ -60,13 +64,51 @@ func (b *Board) Fill(row int, col int, allTiles []Tile, visited *IntSet) {
 
 		visited.Add(t.ID)
 		if col == b.dim-1 {
-			b.Fill(row+1, 0, allTiles, visited)
+			b.FillAndSolve(row+1, 0, allTiles, visited)
 		} else {
-			b.Fill(row, col+1, allTiles, visited)
+			b.FillAndSolve(row, col+1, allTiles, visited)
 		}
 		// We've hit a dead end, go back and try again
 		visited.Remove(t.ID)
 	}
+}
+
+
+// Finds sea monsters and returns "roughness" (number of #'s not part of sea monster)
+func (b *Board) findMonsters() int {
+	monster := []string{
+		"                  # ",
+		"#    ##    ##    ###",
+		" #  #  #  #  #  #   ",
+	}
+
+	
+
+	// Remove frames around tiles, and stitch them all together
+	sea := make([]string, 0)
+	for row := 0; row <= 9*b.dim; row++ {
+		line := ""
+		for _, c := range b.tiles[row/10] {
+			if row % 10 == 0 { // Skip top and bottom borders
+				continue
+			}
+			line += c.Column(row%c.Height())[1:9] // Skip left and right borders
+		}
+		if line != "" {
+			sea = append(sea, line)
+		}
+	}
+
+	for _, s := range sea {
+		fmt.Println(s)
+	}
+
+	Printfln("%d*%d", len(sea), len(sea[0]))
+
+	// todo: compile error
+	sort.Strings(monster)
+
+	return 0
 }
 
 func (b *Board) Print() {
@@ -83,23 +125,12 @@ func (b *Board) Print() {
 	}
 }
 
-func Solve1(input []string) int {
+func Solve(input []string) {
 	tiles := parseInput(input)
 	board := NewBoard(len(tiles))
 	variations := tileVariations(tiles)
 	visited := NewIntSet()
-	board.Fill(0, 0, variations, visited)
-
-	//board.Print()
-
-	return board.tiles[0][0].ID *
-		board.tiles[0][board.dim-1].ID *
-		board.tiles[board.dim-1][0].ID *
-		board.tiles[board.dim-1][board.dim-1].ID
-}
-
-func Solve2(input []string) int {
-	return 0
+	board.FillAndSolve(0, 0, variations, visited)
 }
 
 func parseInput(blocks []string) []Tile {
