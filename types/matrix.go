@@ -85,6 +85,18 @@ func (m *Matrix) String() string {
 	return out
 }
 
+func (m *Matrix) ToStringSlice() []string {
+	var out []string
+	for y := 0; y <= m.Height()-1; y++ {
+		line := ""
+		for x := 0; x <= m.Width()-1; x++ {
+			line += string(rune(m.data[y][x]))
+		}
+		out = append(out, line)
+	}
+	return out
+}
+
 func (m *Matrix) checkBounds(p Point) {
 	if p.X < 0 || p.X > m.Width() - 1 || p.Y < 0 || p.Y > m.Height() - 1 {
 		Panic("point out of bounds: %v", p)

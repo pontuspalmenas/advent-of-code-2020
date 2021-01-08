@@ -119,17 +119,6 @@ func (t *Tile) BorderRight() string {
 	return out
 }
 
-// Stitch a list of tiles together into an array of strings, one line per row, after removing their borders
-func Stitch(tiles []Tile) []string {
-	s := make([]string, tiles[0].Height())
-	for _, t := range tiles {
-		for y := 1; y < tiles[0].Height()-1; y++ {
-			s[y] = t.Column(y)[1:9]
-		}
-	}
-	return s
-}
-
 func (t *Tile) Inner() string {
 	s := ""
 	for y:=1; y<t.Height(); y++ {

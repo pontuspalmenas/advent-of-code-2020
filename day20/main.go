@@ -73,34 +73,34 @@ func (b *Board) FillAndSolve(row int, col int, allTiles []Tile, visited *IntSet)
 	}
 }
 
+var monster = []string{
+	"                  # ",
+	"#    ##    ##    ###",
+	" #  #  #  #  #  #   ",
+}
 
 // Finds sea monsters and returns "roughness" (number of #'s not part of sea monster)
 func (b *Board) findMonsters() int {
-	monster := []string{
-		"                  # ",
-		"#    ##    ##    ###",
-		" #  #  #  #  #  #   ",
-	}
-
-	
-
 	// Remove frames around tiles, and stitch them all together
 	sea := make([]string, 0)
-	for row := 0; row <= 9*b.dim; row++ {
-		line := ""
-		for _, c := range b.tiles[row/10] {
-			if row % 10 == 0 { // Skip top and bottom borders
-				continue
-			}
-			line += c.Column(row%c.Height())[1:9] // Skip left and right borders
-		}
-		if line != "" {
-			sea = append(sea, line)
+	for _, r := range b.tiles {
+		sea = append(sea, b.Stitch(r)...)
+	}
+
+	m := NewMatrix(96,96)
+	for y,r := range sea {
+		for x,c := range r {
+			m.Set(Point{X:x, Y: y}, int(c))
 		}
 	}
 
-	for _, s := range sea {
-		fmt.Println(s)
+	for i:=0; i<2; i++ {
+		FindMonsters(m.ToStringSlice())
+		for j := 0; j < 3; j++ {
+			m.Rotate()
+			FindMonsters(m.ToStringSlice())
+		}
+		m.Flip()
 	}
 
 	Printfln("%d*%d", len(sea), len(sea[0]))
@@ -109,6 +109,54 @@ func (b *Board) findMonsters() int {
 	sort.Strings(monster)
 
 	return 0
+}
+
+func FindMonsters(sea []string) int {
+	h := len(monster)
+	w := len(monster[0])
+
+	spots := NewPointSet()
+	for row := 0; row < len(sea)-h-1; row++ {
+		for col:=0; col < len(sea[0])-w-1; col++ {
+			area := []string{sea[row][col:col+w],sea[row+1][col:col+w],sea[row+1][col:col+w]}
+			if FindMonster(area) {
+				for r := 0; r < h; r++ {
+					for c := 0; c < w; c++ {
+						if monster[r][c] == '#' {
+							spots.Add(Point{X: col+c, Y: row+r})
+						}
+					}
+				}
+				println("MONSTER MONSTER MONSTER")
+				os.Exit(0)
+			}
+		}
+	}
+
+	return 0
+}
+
+func FindMonster(area []string) bool {
+	found := true
+	for y:=0; y < len(monster); y++ {
+		for x := range area[y] {
+			if monster[y][x] == '#' && area[y][x] == '.' {
+				found = false
+			}
+		}
+	}
+	return found
+}
+
+// Stitch a list of tiles together into an array of strings, one line per row, after removing their borders
+func (b *Board) Stitch(tiles []*Tile) []string {
+	s := make([]string, tiles[0].Height()-2)
+	for _, t := range tiles {
+		for y := 0; y < tiles[0].Height()-2; y++ {
+			s[y] += t.Column(y+1)[1:t.Width()-1]
+		}
+	}
+	return s
 }
 
 func (b *Board) Print() {
