@@ -185,3 +185,12 @@ func Copy2DIntSlice(matrix [][]int) [][]int {
 	}
 	return duplicate
 }
+
+func Copy2DRuneSlice(matrix [][]rune) [][]rune {
+	duplicate := make([][]rune, len(matrix))
+	for i := range matrix {
+		duplicate[i] = make([]rune, len(matrix[i]))
+		copy(duplicate[i], matrix[i])
+	}
+	return duplicate
+}

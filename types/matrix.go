@@ -73,7 +73,7 @@ func (m *Matrix) Set(p Point, v int) {
 }
 
 // Returns a printable Matrix
-// todo: print ints as numbers, not their rune. but that breaks Tile.String()...
+// todo: print ints as numbers, not their rune. but that breaks Tile_OLD.String()...
 func (m *Matrix) String() string {
 	out := ""
 	for y := 0; y <= m.Height()-1; y++ {

@@ -7,47 +7,55 @@ import (
 
 func TestNewTile(t *testing.T) {
 	expected :=
-`Tile 2:
+`Tile_OLD 2:
 0000
 1111
 2222
 3333
 `
 
-	tile := NewTileFromString(expected)
+	tile := NewTileFromString_OLD(expected)
 	AssertEq(t, tile.String(), expected)
 }
 
 func TestTile_Rotate(t *testing.T) {
 	input :=
-`Tile 3:
-1234
-5678
-9012
-3456
+`Tile_OLD 3:
+1234123412
+5678567856
+9012901290
+3456345634
+1234123412
+5678567856
+9012901290
+3456345634
+1234123412
+5678567856
 `
 	expected :=
-`Tile 3:
+`Tile_OLD 3:
 3951
 4062
 5173
 6284
 `
 
-	tile := NewTileFromString(input)
+	tile := NewTileFromString_OLD(input)
 	tile.Rotate()
+	s:=tile.String()
+	println(s)
 	AssertEq(t, tile.String(), expected)
 }
 
 func TestTile_Variations(t *testing.T) {
 	input :=
-		`Tile 3:
+		`Tile_OLD 3:
 1234
 5678
 9012
 3456
 `
-	tile := NewTileFromString(input)
+	tile := NewTileFromString_OLD(input)
 	variations := tile.Variations()
 
 	seen := NewStringSet()
@@ -64,7 +72,7 @@ func TestTile_Variations(t *testing.T) {
 
 func TestTile_Borders(t *testing.T) {
 	input :=
-`Tile 4:
+`Tile_OLD 4:
 1234
 5678
 9012
@@ -76,7 +84,7 @@ func TestTile_Borders(t *testing.T) {
 	top := "1234"
 	bottom := "3456"
 
-	tile := NewTileFromString(input)
+	tile := NewTileFromString_OLD(input)
 	AssertEq(t, tile.BorderLeft(), left)
 	AssertEq(t, tile.BorderRight(), right)
 	AssertEq(t, tile.BorderTop(), top)
