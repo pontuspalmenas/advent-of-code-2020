@@ -138,3 +138,7 @@ func (t *Tile) BorderRight() string {
 	return out
 }
 
+func (t *Tile) Column(row int) []rune {
+	return t.Data[row]
+}
+

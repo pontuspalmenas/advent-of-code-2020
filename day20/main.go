@@ -3,6 +3,7 @@ package main
 import (
 	. "aoc"
 	. "aoc/types"
+	"fmt"
 	"math"
 	"os"
 )
@@ -30,9 +31,101 @@ func Solve(input string) {
 	tiles := parseInput(input)
 	board := NewBoard(len(tiles))
 	variations := tileVariations(tiles)
-	EnsureUnique(variations)
 	visited := NewIntSet()
 	board.FillAndSolve(0, 0, variations, visited)
+}
+
+// Takes a set up board and solves for part 2
+func Solve2(b *Board) int {
+	sea := b.Stitch()
+	//PrintSea(sea)
+
+	// Rotate, Flip, until we find the monsters
+	for i:=0; i<2; i++ {
+		for j := 0; j < 3; j++ {
+			if Roughness(sea) > 0 {
+				panic("solved")
+			}
+			sea = Rotate(sea)
+		}
+		sea = Flip(sea)
+	}
+
+	return 0
+}
+
+// Remove frames around tiles and stitch together
+func (b *Board) Stitch() [][]rune {
+	dim := b.dim * 8 // Tiles are 10x10, remove frame => 8
+	s := Make2dRuneSlice(dim, dim)
+
+	i:=0
+	j:=0
+	for y:=0;y<96;y++ {
+		for x:=0;x<96;x++ {
+			//Printfln("s[%d][%d] = b.tiles[%d][%d].Data[%d][%d]", y,x,y/8,x/8,i+1,j+1)
+			s[y][x] = b.tiles[y/8][x/8].Data[i+1][j+1]
+			j = (j+1)%8
+		}
+		i = (i+1)%8
+	}
+
+	return s
+}
+
+func Roughness(sea [][]rune) int {
+	h := len(monster)
+	w := len(monster[0])
+
+	for row := 0; row < len(sea)-h-1; row++ {
+		for col:=0; col < len(sea[0])-w-1; col++ {
+			area := [][]rune{
+				sea[row][col:col+w],
+				sea[row+1][col:col+w],
+				sea[row+1][col:col+w]}
+			if FindMonster(area) {
+				for r := 0; r < h; r++ {
+					for c := 0; c < w; c++ {
+						if monster[r][c] == '#' {
+							sea[row+r][col+c] = 'O'
+						}
+					}
+				}
+				PrintSea(sea)
+				println("MONSTER MONSTER MONSTER")
+				os.Exit(0)
+			}
+		}
+	}
+
+	return 0
+}
+
+var monster = []string{
+	"                  # ",
+	"#    ##    ##    ###",
+	" #  #  #  #  #  #   ",
+}
+
+func FindMonster(area [][]rune) bool {
+	found := true
+	for y:=0; y < len(monster); y++ {
+		for x:=0; x < len(monster[0]); x++ {
+			if monster[y][x] == '#' && area[y][x] == '.' {
+				found = false
+			}
+		}
+	}
+	return found
+}
+
+func PrintSea(sea [][]rune) {
+	for i:=0;i<96;i++ {
+		for j:=0;j<96;j++ {
+			fmt.Printf("%c", sea[i][j])
+		}
+		fmt.Println()
+	}
 }
 
 func parseInput(input string) []Tile {
@@ -61,9 +154,9 @@ func (b *Board) FillAndSolve(row int, col int, allTiles []Tile, visited *IntSet)
 			b.tiles[b.dim-1][0].ID *
 			b.tiles[b.dim-1][b.dim-1].ID
 
-		//p2 := b.findMonsters()
+		p2 := Solve2(b)
 		Printfln("P1: %d", p1)
-		//Printfln("P2: %d", p2)
+		Printfln("P2: %d", p2)
 
 		// Todo: resolve backtracking efficiently without os.Exit()
 		os.Exit(0)
@@ -90,16 +183,5 @@ func (b *Board) FillAndSolve(row int, col int, allTiles []Tile, visited *IntSet)
 		}
 		// We've hit a dead end, go back and try again
 		visited.Remove(t.ID)
-	}
-}
-
-func EnsureUnique(tiles []Tile) {
-	seen := NewStringSet()
-	for _, tt := range tiles {
-		s := tt.String()
-		if seen.Contains(s) {
-			panic("Non-unique tile variation")
-		}
-		seen.Add(s)
 	}
 }
