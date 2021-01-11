@@ -23,6 +23,7 @@ func NewBoard(size int) *Board {
 	return &Board{tiles: tiles, dim: dim}
 }
 
+// This solution uses backtracking, which is not very testable.
 func main() {
 	Solve(Input("day20/input.txt"))
 }
@@ -38,12 +39,10 @@ func Solve(input string) {
 // Takes a set up board and solves for part 2
 func Solve2(b *Board) int {
 	sea := b.Stitch()
-	//PrintMap(sea)
 
 	// Rotate, Flip, until we find the monsters
 	for i:=0; i<2; i++ {
 		for j := 0; j < 3; j++ {
-
 			roughness := Roughness(sea)
 			if roughness > 0 {
 				return roughness
@@ -53,7 +52,7 @@ func Solve2(b *Board) int {
 		sea = Flip(sea)
 	}
 
-	return 0
+	panic("could not find solution")
 }
 
 // Remove frames around tiles and stitch together
@@ -65,7 +64,6 @@ func (b *Board) Stitch() [][]rune {
 	j:=0
 	for y:=0;y<dim;y++ {
 		for x:=0;x<dim;x++ {
-			//Printfln("s[%d][%d] = b.tiles[%d][%d].Data[%d][%d]", y,x,y/8,x/8,i+1,j+1)
 			s[y][x] = b.tiles[y/8][x/8].Data[i+1][j+1]
 			j = (j+1)%8
 		}
@@ -75,6 +73,7 @@ func (b *Board) Stitch() [][]rune {
 	return s
 }
 
+// Scan this rotated/flipped version of the sea, return roughness if monsters found
 func Roughness(sea [][]rune) int {
 	h := len(monster)
 	w := len(monster[0])
@@ -122,15 +121,14 @@ var monster = []string{
 }
 
 func FindMonster(area [][]rune) bool {
-	found := true
 	for y:=0; y < len(monster); y++ {
 		for x:=0; x < len(monster[0]); x++ {
 			if monster[y][x] == '#' && area[y][x] == '.' {
-				found = false
+				return false
 			}
 		}
 	}
-	return found
+	return true
 }
 
 func PrintMap(a [][]rune) {

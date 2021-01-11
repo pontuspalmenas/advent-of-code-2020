@@ -2,11 +2,10 @@ package main
 
 import (
 	. "aoc"
-	"fmt"
 	"testing"
 )
 
-func Test(t *testing.T) {
+func TestRoughness(t *testing.T) {
 	s :=
 `.#.#..#.##...#.##..#####
 ###....#.#....#..#......
@@ -34,18 +33,20 @@ func Test(t *testing.T) {
 ...###...##...#...#..###`
 
 	sea := toRuneSlices(Lines(s))
+	roughness := 0
 	// Rotate, Flip, until we find the monsters
-	for i:=0; i<2; i++ {
+	for i := 0; i < 2; i++ {
 		for j := 0; j < 3; j++ {
-			PrintMap(sea)
-			fmt.Println()
-			if Roughness(sea) > 0 {
-				panic("solved")
+			r := Roughness(sea)
+			if r > 0 {
+				roughness = r
 			}
 			sea = Rotate(sea)
 		}
 		sea = Flip(sea)
 	}
+	AssertEq(t, roughness > 0, true)
+
 }
 
 func toRuneSlices(ss []string) [][]rune {
