@@ -38,13 +38,15 @@ func Solve(input string) {
 // Takes a set up board and solves for part 2
 func Solve2(b *Board) int {
 	sea := b.Stitch()
-	//PrintSea(sea)
+	//PrintMap(sea)
 
 	// Rotate, Flip, until we find the monsters
 	for i:=0; i<2; i++ {
 		for j := 0; j < 3; j++ {
-			if Roughness(sea) > 0 {
-				panic("solved")
+
+			roughness := Roughness(sea)
+			if roughness > 0 {
+				return roughness
 			}
 			sea = Rotate(sea)
 		}
@@ -57,12 +59,12 @@ func Solve2(b *Board) int {
 // Remove frames around tiles and stitch together
 func (b *Board) Stitch() [][]rune {
 	dim := b.dim * 8 // Tiles are 10x10, remove frame => 8
-	s := Make2dRuneSlice(dim, dim)
+	s := Make2DRuneSlice(dim, dim)
 
 	i:=0
 	j:=0
-	for y:=0;y<96;y++ {
-		for x:=0;x<96;x++ {
+	for y:=0;y<dim;y++ {
+		for x:=0;x<dim;x++ {
 			//Printfln("s[%d][%d] = b.tiles[%d][%d].Data[%d][%d]", y,x,y/8,x/8,i+1,j+1)
 			s[y][x] = b.tiles[y/8][x/8].Data[i+1][j+1]
 			j = (j+1)%8
@@ -77,13 +79,16 @@ func Roughness(sea [][]rune) int {
 	h := len(monster)
 	w := len(monster[0])
 
+	foundMonster := false
 	for row := 0; row < len(sea)-h-1; row++ {
 		for col:=0; col < len(sea[0])-w-1; col++ {
 			area := [][]rune{
 				sea[row][col:col+w],
 				sea[row+1][col:col+w],
-				sea[row+1][col:col+w]}
+				sea[row+2][col:col+w]}
+
 			if FindMonster(area) {
+				foundMonster = true
 				for r := 0; r < h; r++ {
 					for c := 0; c < w; c++ {
 						if monster[r][c] == '#' {
@@ -91,14 +96,23 @@ func Roughness(sea [][]rune) int {
 						}
 					}
 				}
-				PrintSea(sea)
-				println("MONSTER MONSTER MONSTER")
-				os.Exit(0)
 			}
 		}
 	}
 
-	return 0
+	roughness := 0
+	if foundMonster {
+		PrintMap(sea)
+		for i:=0;i<len(sea);i++{
+			for j:=0;j<len(sea[0]);j++{
+				if sea[j][i] == '#' {
+					roughness++
+				}
+			}
+		}
+	}
+
+	return roughness
 }
 
 var monster = []string{
@@ -119,10 +133,10 @@ func FindMonster(area [][]rune) bool {
 	return found
 }
 
-func PrintSea(sea [][]rune) {
-	for i:=0;i<96;i++ {
-		for j:=0;j<96;j++ {
-			fmt.Printf("%c", sea[i][j])
+func PrintMap(a [][]rune) {
+	for i:=0;i<len(a);i++ {
+		for j:=0;j<len(a[0]);j++ {
+			fmt.Printf("%c", a[i][j])
 		}
 		fmt.Println()
 	}

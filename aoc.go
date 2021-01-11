@@ -177,6 +177,14 @@ func Panic(format string, a ...interface{}) {
 	panic(fmt.Sprintf(format, a...))
 }
 
+func Make2DRuneSlice(n, m int) [][]rune {
+	a := make([][]rune, n)
+	for i := range a {
+		a[i] = make([]rune, m)
+	}
+	return a
+}
+
 func Copy2DIntSlice(matrix [][]int) [][]int {
 	duplicate := make([][]int, len(matrix))
 	for i := range matrix {
