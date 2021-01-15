@@ -2,6 +2,8 @@ package main
 
 import (
 	. "aoc"
+	. "aoc/types"
+	"container/ring"
 	"fmt"
 	"time"
 )
@@ -15,62 +17,85 @@ func main() {
 	fmt.Println("p2:", p2)
 }
 
-type Circle struct {
-	head *Cup
-}
+func Solve1(input string) string {
+	dict, cups := Setup(input)
 
-func NewCircle() *Circle {
-	return &Circle{head: nil}
-}
-
-func (c *Circle) add(v int) {
-	if c.head == nil {
-		c.head = &Cup{val: v}
-		c.head.next = c.head
-		return
+	curr := cups
+	size := curr.Len()
+	for i := 1; i <= 100; i++ {
+		move(dict, curr, size)
 	}
 
-	curr := c.head
-	for curr.next != c.head && curr.next != nil {
-		curr = curr.next
+	p := dict[1]
+	ans := ""
+	for i := 1; i < len(input); i++ {
+		p = p.Next()
+		ans += fmt.Sprintf("%d", p.Value.(int))
 	}
 
-	curr.val = v
-	curr.next = c.head
+	return ans
 }
 
-type Cup struct {
-	val int
-	next *Cup
-}
+func move(dict map[int]*ring.Ring, curr *ring.Ring, size int) {
+	removedCups := curr.Unlink(3)
+	target := 1 + ((size + curr.Value.(int) - 2) % size)
+	removed := NewIntSet()
+	removed.Add(removedCups.Move(0).Value.(int))
+	removed.Add(removedCups.Move(1).Value.(int))
+	removed.Add(removedCups.Move(2).Value.(int))
 
-func Solve1(input string) int {
-	circle := InitState(input)
-	Printfln("cups: %s", circle.String())
-
-	return 0
-}
-
-func InitState(input string) *Circle {
-	c := NewCircle()
-
-	for _, ch := range input {
-		c.add(Int(string(ch)))
-	}
-	return c
-}
-
-func (c *Circle) String() string {
-	curr := c.head
-	s := fmt.Sprintf("%d ", curr.val)
-	for curr.next != c.head && curr.next != nil {
-		curr = curr.next
-		s += fmt.Sprintf("%d ", curr.val)
+	for removed.Contains(target) {
+		target = 1 + ((size + target - 2) % size)
 	}
 
-	return s
+	dict[target].Link(removedCups)
+	curr = curr.Next()
 }
+
+func Setup(input string) (map[int]*ring.Ring, *ring.Ring) {
+	dict := make(map[int]*ring.Ring)
+	cups := ring.New(len(input))
+	for _, c := range input {
+		n := Int(string(c))
+		cups.Value = n
+		dict[n] = cups
+		cups = cups.Next()
+	}
+	return dict, cups
+}
+
+const Mil = 1000000
 
 func Solve2(input string) int {
-	return 0
+	dict, cups := Setup(input)
+
+	last := cups.Prev()
+	added := ring.New(Mil - len(input))
+	for i:=len(input)+1; i<=Mil; i++ {
+		added.Value = i
+		dict[i] = added
+		added = added.Next()
+	}
+	last.Link(added)
+
+	curr := cups
+	size := curr.Len()
+	for i := 1; i <= 10*Mil; i++ {
+		removedCups := curr.Unlink(3)
+		target := 1 + ((size + curr.Value.(int) - 2) % size)
+		removed := NewIntSet()
+		removed.Add(removedCups.Move(0).Value.(int))
+		removed.Add(removedCups.Move(1).Value.(int))
+		removed.Add(removedCups.Move(2).Value.(int))
+
+		for removed.Contains(target) {
+			target = 1 + ((size + target - 2) % size)
+		}
+
+		dict[target].Link(removedCups)
+		curr = curr.Next()
+	}
+
+	p := dict[1]
+	return p.Move(1).Value.(int) * p.Move(2).Value.(int)
 }

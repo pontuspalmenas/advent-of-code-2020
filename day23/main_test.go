@@ -6,15 +6,9 @@ import (
 )
 
 func Test1(t *testing.T) {
-	s:=
-`389125467`
-
-	AssertEq(t, Solve1(Lines(s)), 92658374)
+	AssertEq(t, Solve1("389125467"), "67384529")
 }
 
 func Test2(t *testing.T) {
-	s:=
-``
-
-	AssertEq(t, Solve2(Lines(s)), 0)
+	AssertEq(t, Solve2("389125467"), 149245887792)
 }
