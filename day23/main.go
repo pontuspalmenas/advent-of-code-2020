@@ -2,12 +2,13 @@ package main
 
 import (
 	. "aoc"
-	. "aoc/types"
 	"container/ring"
 	"fmt"
 	"time"
 )
 
+
+// hints by lizthegrey
 func main() {
 	start := time.Now()
 	p1 := Solve1("685974213")
@@ -17,13 +18,20 @@ func main() {
 	fmt.Println("p2:", p2)
 }
 
-func Solve1(input string) string {
-	dict, cups := Setup(input)
+// todo: don't want these global, but if I send them as args to move(),
+//		 Solve2 breaks for some mysterious reason. map is actually a pointer
+//		 so it _should_ work, but Go really do be like that sometimes.
+var dict map[int]*ring.Ring
+var curr *ring.Ring
 
-	curr := cups
-	size := curr.Len()
+func Solve1(input string) string {
+	var cups *ring.Ring
+	dict, cups = setup(input)
+
+	curr = cups
+
 	for i := 1; i <= 100; i++ {
-		move(dict, curr, size)
+		move()
 	}
 
 	p := dict[1]
@@ -36,23 +44,31 @@ func Solve1(input string) string {
 	return ans
 }
 
-func move(dict map[int]*ring.Ring, curr *ring.Ring, size int) {
-	removedCups := curr.Unlink(3)
-	target := 1 + ((size + curr.Value.(int) - 2) % size)
-	removed := NewIntSet()
-	removed.Add(removedCups.Move(0).Value.(int))
-	removed.Add(removedCups.Move(1).Value.(int))
-	removed.Add(removedCups.Move(2).Value.(int))
+const Mil = 1000000
 
-	for removed.Contains(target) {
-		target = 1 + ((size + target - 2) % size)
+func Solve2(input string) int {
+	var cups *ring.Ring
+	dict, cups = setup(input)
+
+	last := cups.Prev()
+	added := ring.New(Mil - len(input))
+	for i:=len(input)+1; i<=Mil; i++ {
+		added.Value = i
+		dict[i] = added
+		added = added.Next()
+	}
+	last.Link(added)
+
+	curr = cups
+	for i := 1; i <= 10*Mil; i++ {
+		move()
 	}
 
-	dict[target].Link(removedCups)
-	curr = curr.Next()
+	p := dict[1]
+	return p.Move(1).Value.(int) * p.Move(2).Value.(int)
 }
 
-func Setup(input string) (map[int]*ring.Ring, *ring.Ring) {
+func setup(input string) (map[int]*ring.Ring, *ring.Ring) {
 	dict := make(map[int]*ring.Ring)
 	cups := ring.New(len(input))
 	for _, c := range input {
@@ -64,38 +80,32 @@ func Setup(input string) (map[int]*ring.Ring, *ring.Ring) {
 	return dict, cups
 }
 
-const Mil = 1000000
-
-func Solve2(input string) int {
-	dict, cups := Setup(input)
-
-	last := cups.Prev()
-	added := ring.New(Mil - len(input))
-	for i:=len(input)+1; i<=Mil; i++ {
-		added.Value = i
-		dict[i] = added
-		added = added.Next()
+func move() {
+	removed := curr.Unlink(3)
+	target := curr.Value.(int) - 1
+	target = wrap(target)
+	for contains(removed, target) {
+		target = wrap(target-1)
 	}
-	last.Link(added)
 
-	curr := cups
-	size := curr.Len()
-	for i := 1; i <= 10*Mil; i++ {
-		removedCups := curr.Unlink(3)
-		target := 1 + ((size + curr.Value.(int) - 2) % size)
-		removed := NewIntSet()
-		removed.Add(removedCups.Move(0).Value.(int))
-		removed.Add(removedCups.Move(1).Value.(int))
-		removed.Add(removedCups.Move(2).Value.(int))
+	dict[target].Link(removed)
+	curr = curr.Next()
+}
 
-		for removed.Contains(target) {
-			target = 1 + ((size + target - 2) % size)
+func contains(ring *ring.Ring, v int) bool {
+	r := ring
+	for i:=0; i < ring.Len(); i++ {
+		if r.Value.(int) == v {
+			return true
 		}
-
-		dict[target].Link(removedCups)
-		curr = curr.Next()
+		r = r.Next()
 	}
+	return false
+}
 
-	p := dict[1]
-	return p.Move(1).Value.(int) * p.Move(2).Value.(int)
+func wrap(i int) int {
+	if i == 0 {
+		return Mil
+	}
+	return i
 }
