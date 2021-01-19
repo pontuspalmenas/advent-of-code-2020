@@ -52,10 +52,18 @@ func Draw(p1 *Deck, p2 *Deck) *Deck {
 	return p2
 }
 
+func (d *Deck) Score() int {
+	score := 0
+	size := d.Size()
+	for i := 0; i < size; i++ {
+		score += d.cards[i] * (size-i)
+	}
+	return score
+}
+
 func Solve1(input string) int {
 	p1, p2 := ParseInput(input)
 
-	// Todo: can programatically do this, not just p1 p2
 	var winner *Deck
 	round := 1
 	for p1.Size() > 0 && p2.Size() > 0 {
@@ -80,13 +88,8 @@ func Solve1(input string) int {
 	return p1.Score()
 }
 
-func (d *Deck) Score() int {
-	score := 0
-	size := d.Size()
-	for i := 0; i < size; i++ {
-		score += d.cards[i] * (size-i)
-	}
-	return score
+func Solve2(input string) int {
+	return 0
 }
 
 func ParseInput(input string) (*Deck, *Deck) {
@@ -94,8 +97,4 @@ func ParseInput(input string) (*Deck, *Deck) {
 	p1 := Ints(strings.Join(Lines(s[0])[1:], ","))
 	p2 := Ints(strings.Join(Lines(s[1])[1:], ","))
 	return &Deck{player: 1, cards: p1}, &Deck{player: 2, cards: p2}
-}
-
-func Solve2(input string) int {
-	return 0
 }

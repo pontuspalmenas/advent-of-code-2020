@@ -7,8 +7,6 @@ import (
 	"time"
 )
 
-
-// hints by lizthegrey
 func main() {
 	start := time.Now()
 	p1 := Solve1("685974213")

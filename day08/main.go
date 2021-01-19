@@ -2,7 +2,7 @@ package main
 
 import (
 	. "aoc"
-	. "aoc/vm"
+	. "aoc/day08/vm"
 	"fmt"
 )
 

@@ -1,8 +1,8 @@
 package vm
 
 import (
-	"fmt"
 	. "aoc"
+	"fmt"
 )
 
 type Instruction struct {
