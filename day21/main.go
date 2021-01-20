@@ -2,7 +2,7 @@ package main
 
 import (
 	. "aoc"
-	"aoc/types"
+	. "aoc/types"
 	"fmt"
 	"strings"
 	"time"
@@ -19,56 +19,48 @@ func main() {
 }
 
 type dish struct {
-	ingredients []string
-	allergens []string
+	ingredients *StringSet
+	allergens *StringSet
 }
 
 func Solve1(input []string) int {
 	dishes := parse(input)
 
-	// what ingredients may contain allergen?
-	allergenToIngredients := map[string][][]string{}
+	possible := make(map[string]*StringSet)
 	for _, dish := range dishes {
-		for _, allergen := range dish.allergens {
-			if _, ok := allergenToIngredients[allergen]; !ok {
-				allergenToIngredients[allergen] = [][]string{dish.ingredients}
-			} else {
-				allergenToIngredients[allergen] = append(allergenToIngredients[allergen], dish.ingredients)
+		for _, ingr := range dish.ingredients.ToSlice() {
+			if possible[ingr] == nil {
+				possible[ingr] = NewStringSet()
 			}
+			possible[ingr] = possible[ingr].Union(dish.allergens)
 		}
 	}
 
-	// find candidates for safe ingredients
-	candidates := types.NewStringSet()
-	for _, list := range allergenToIngredients {
-		for _, ingredients := range list {
-			for _, ingredient := range ingredients {
-				if !ingredientIsInAll(list, ingredient) {
-					candidates.Add(ingredient)
-					println("candidate:", ingredient)
-				}
-			}
-		}
-	}
-
-	// reduce candidates to one ingredient per allergen
-	safe := types.NewStringSet()
-	panic("go reduce, lazy man")
-
-	// count safe in ingredients
-	count := 0
-	//safe = ToStringSet([]string{"kfcds","nhms","sbzzf","trh"})
-	for _, s := range safe.ToSlice() {
+	// ok, this time, reduce.
+	for k, v := range possible {
 		for _, dish := range dishes {
-			for _, ingredient := range dish.ingredients {
-				if s == ingredient {
-					count++
+			if dish.ingredients.Contains(k) {
+				for _, a := range possible[k].ToSlice() {
+					if !dish.allergens.Contains(a) {
+						v.Remove(a)
+					}
 				}
 			}
 		}
 	}
 
-	return count
+	// för varje ingrediens
+		// gå igenom matlistan
+			// om ingrediensen finns där
+				// om inte allergenen finns där
+					// plocka bort från possible
+
+	for k, v := range possible {
+		Printfln("%s %v", k, v)
+	}
+
+	safe := NewStringSet()
+	return countSafeOccurrences(safe, dishes)
 }
 
 func Solve2(input []string) int {
@@ -80,13 +72,13 @@ func parse(input []string) []dish {
 	for _, s := range input {
 		// todo: replace this mess with regex
 		split := Split(s, " (")
-		d := dish{}
+		d := dish{ingredients: NewStringSet(), allergens: NewStringSet()}
 		for _, ingr := range strings.Fields(split[0]) {
-			d.ingredients = append(d.ingredients, ingr)
+			d.ingredients.Add(ingr)
 		}
 		allergens := split[1][len("(contains"):len(split[1])-1]
 		for _, allergen := range SplitByComma(allergens) {
-			d.allergens = append(d.allergens, allergen)
+			d.allergens.Add(allergen)
 		}
 
 		dishes = append(dishes, d)
@@ -94,24 +86,26 @@ func parse(input []string) []dish {
 	return dishes
 }
 
-func ingredientIsInAll(list [][]string, ingredient string) bool {
-	for _, ingredients := range list {
-		found := false
-		for _, ingr := range ingredients {
-			if ingr == ingredient {
-				found = true
+func countSafeOccurrences(safe *StringSet, dishes []dish) int {
+	count := 0
+	for _, s := range safe.ToSlice() {
+		for _, dish := range dishes {
+			for _, ingredient := range dish.ingredients.ToSlice() {
+				if s == ingredient {
+					count++
+				}
 			}
 		}
-		if !found {
-			return false
-		}
 	}
-	return true
+	return count
 }
 
-func allIngredients(dishes []dish) (all [][]string) {
+func uniqueIngredients(dishes []dish) *StringSet {
+	set := NewStringSet()
 	for _, d := range dishes {
-		all = append(all, d.ingredients)
+		for _, s := range d.ingredients.ToSlice() {
+			set.Add(s)
+		}
 	}
-	return all
+	return set
 }
