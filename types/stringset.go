@@ -1,6 +1,8 @@
 package types
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type StringSet struct {
 	m map[string]struct{}
@@ -64,6 +66,17 @@ func (s *StringSet) Union(s2 *StringSet) *StringSet {
 	for v := range s2.m {
 		out.Add(v)
 	}
+	return out
+}
+
+func (s *StringSet) Intersection(s2 *StringSet) *StringSet {
+	out := NewStringSet()
+	for v := range s.m {
+		if s2.Contains(v) {
+			out.Add(v)
+		}
+	}
+
 	return out
 }
 

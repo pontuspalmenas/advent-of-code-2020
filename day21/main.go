@@ -26,45 +26,56 @@ type dish struct {
 func Solve1(input []string) int {
 	dishes := parse(input)
 
-	possible := make(map[string]*StringSet)
+	// Remove unsafe ingredients from food
+	for _, ingrs := range candidates(dishes) {
+		for _, ingr := range ingrs.ToSlice() {
+			for _, dish := range dishes {
+				dish.ingredients.Remove(ingr)
+			}
+		}
+	}
+
+	// Count how many are left
+	count := 0
 	for _, dish := range dishes {
-		for _, ingr := range dish.ingredients.ToSlice() {
-			if possible[ingr] == nil {
-				possible[ingr] = NewStringSet()
-			}
-			possible[ingr] = possible[ingr].Union(dish.allergens)
-		}
+		count += dish.ingredients.Size()
 	}
 
-	// ok, this time, reduce.
-	for k, v := range possible {
-		for _, dish := range dishes {
-			if dish.ingredients.Contains(k) {
-				for _, a := range possible[k].ToSlice() {
-					if !dish.allergens.Contains(a) {
-						v.Remove(a)
-					}
-				}
-			}
-		}
-	}
-
-	// för varje ingrediens
-		// gå igenom matlistan
-			// om ingrediensen finns där
-				// om inte allergenen finns där
-					// plocka bort från possible
-
-	for k, v := range possible {
-		Printfln("%s %v", k, v)
-	}
-
-	safe := NewStringSet()
-	return countSafeOccurrences(safe, dishes)
+	return count
 }
 
 func Solve2(input []string) int {
+	dishes := parse(input)
+	candidates := candidates(dishes)
+
+	final := make(map[string]string)
+	changed := true
+	for changed {
+		changed = false
+
+	}
+
 	return 0
+}
+
+func candidates(dishes []dish) map[string]*StringSet {
+	candidates := make(map[string]*StringSet)
+	for _, dish := range dishes {
+		for _, allergen := range dish.allergens.ToSlice() {
+			if candidates[allergen] == nil {
+				candidates[allergen] = NewStringSet()
+			}
+			candidates[allergen] = candidates[allergen].Union(dish.ingredients)
+		}
+	}
+
+	// Now reduce to only possible candidates
+	for _, dish := range dishes {
+		for _, allergen := range dish.allergens.ToSlice() {
+			candidates[allergen] = candidates[allergen].Intersection(dish.ingredients)
+		}
+	}
+	return candidates
 }
 
 func parse(input []string) []dish {
@@ -84,28 +95,4 @@ func parse(input []string) []dish {
 		dishes = append(dishes, d)
 	}
 	return dishes
-}
-
-func countSafeOccurrences(safe *StringSet, dishes []dish) int {
-	count := 0
-	for _, s := range safe.ToSlice() {
-		for _, dish := range dishes {
-			for _, ingredient := range dish.ingredients.ToSlice() {
-				if s == ingredient {
-					count++
-				}
-			}
-		}
-	}
-	return count
-}
-
-func uniqueIngredients(dishes []dish) *StringSet {
-	set := NewStringSet()
-	for _, d := range dishes {
-		for _, s := range d.ingredients.ToSlice() {
-			set.Add(s)
-		}
-	}
-	return set
 }
