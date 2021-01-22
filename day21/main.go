@@ -4,6 +4,7 @@ import (
 	. "aoc"
 	. "aoc/types"
 	"fmt"
+	"sort"
 	"strings"
 	"time"
 )
@@ -27,11 +28,9 @@ func Solve1(input []string) int {
 	dishes := parse(input)
 
 	// Remove unsafe ingredients from food
-	for _, ingrs := range candidates(dishes) {
-		for _, ingr := range ingrs.ToSlice() {
-			for _, dish := range dishes {
-				dish.ingredients.Remove(ingr)
-			}
+	for _, ingr := range candidates(dishes) {
+		for _, dish := range dishes {
+			dish.ingredients.Remove(ingr)
 		}
 	}
 
@@ -44,21 +43,23 @@ func Solve1(input []string) int {
 	return count
 }
 
-func Solve2(input []string) int {
+func Solve2(input []string) string {
 	dishes := parse(input)
-	candidates := candidates(dishes)
+	final := candidates(dishes)
 
-	final := make(map[string]string)
-	changed := true
-	for changed {
-		changed = false
-
+	var allergs []string
+	for k, _ := range final {
+		allergs = append(allergs, k)
 	}
-
-	return 0
+	sort.Strings(allergs)
+	var result string
+	for _, s := range allergs {
+		result += final[s] + ","
+	}
+	return strings.TrimRight(result, ",")
 }
 
-func candidates(dishes []dish) map[string]*StringSet {
+func candidates(dishes []dish) map[string]string {
 	candidates := make(map[string]*StringSet)
 	for _, dish := range dishes {
 		for _, allergen := range dish.allergens.ToSlice() {
@@ -75,7 +76,22 @@ func candidates(dishes []dish) map[string]*StringSet {
 			candidates[allergen] = candidates[allergen].Intersection(dish.ingredients)
 		}
 	}
-	return candidates
+
+	mapping := make(map[string]string)
+	size := len(candidates)
+	for len(mapping) < size {
+		for allerg, ingrs := range candidates {
+			if ingrs.Size() == 1 {
+				found := ingrs.ToSlice()[0]
+				mapping[allerg] = found
+				delete(candidates, allerg)
+				for _, v := range candidates {
+					v.Remove(found)
+				}
+			}
+		}
+	}
+	return mapping
 }
 
 func parse(input []string) []dish {

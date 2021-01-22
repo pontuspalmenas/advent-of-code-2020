@@ -19,12 +19,12 @@ func TestSet_BasicOperations(t *testing.T) {
 	aoc.AssertEq(t, set.Contains("b"), true)
 
 	slice := []string{"a", "b", "c", "d"}
-	aoc.AssertEq(t, ToStringSet(slice).ToSlice(), slice)
+	aoc.AssertEq(t, FromStringSlice(slice).ToSlice(), slice)
 }
 
 func TestSet_Left(t *testing.T) {
-	a := ToStringSet([]string{"a", "b", "c"})
-	b := ToStringSet([]string{"c", "d", "e"})
+	a := FromStringSlice([]string{"a", "b", "c"})
+	b := FromStringSlice([]string{"c", "d", "e"})
 	left := a.Left(b)
 
 	aoc.AssertEq(t, left.Size(), 2)
@@ -33,8 +33,8 @@ func TestSet_Left(t *testing.T) {
 }
 
 func TestSet_Union(t *testing.T) {
-	a := ToStringSet([]string{"a", "b", "c"})
-	b := ToStringSet([]string{"c", "d", "e"})
+	a := FromStringSlice([]string{"a", "b", "c"})
+	b := FromStringSlice([]string{"c", "d", "e"})
 	union := a.Union(b)
 
 	aoc.AssertEq(t, union.Size(), 5)

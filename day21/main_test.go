@@ -17,7 +17,10 @@ sqjhc mxmxvkd sbzzf (contains fish)`
 
 func Test2(t *testing.T) {
 	s:=
-``
+		`mxmxvkd kfcds sqjhc nhms (contains dairy, fish)
+trh fvjkl sbzzf mxmxvkd (contains dairy)
+sqjhc fvjkl (contains soy)
+sqjhc mxmxvkd sbzzf (contains fish)`
 
-	AssertEq(t, Solve2(Lines(s)), 0)
+	AssertEq(t, Solve2(Lines(s)), "fvjkl,mxmxvkd,sqjhc")
 }

@@ -12,7 +12,7 @@ func NewIntSet() *IntSet {
 	return s
 }
 
-func ToIntSet(s []int) *IntSet {
+func FromIntSlice(s []int) *IntSet {
 	out := NewIntSet()
 	for _, v := range s {
 		out.Add(v)

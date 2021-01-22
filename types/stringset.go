@@ -14,7 +14,7 @@ func NewStringSet() *StringSet {
 	return s
 }
 
-func ToStringSet(s []string) *StringSet {
+func FromStringSlice(s []string) *StringSet {
 	out := NewStringSet()
 	for _, v := range s {
 		out.Add(v)
