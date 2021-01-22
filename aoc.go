@@ -61,15 +61,6 @@ func Ints(s string) []int {
 	return ints
 }
 
-func FindIntInSlice(slice []int, n int) int {
-	for i, s := range slice {
-		if s == n {
-			return i
-		}
-	}
-	return -1
-}
-
 func Min(a, b int) int {
 	if a < b {
 		return a
@@ -138,14 +129,6 @@ func Manhattan(p1 Point, p2 Point) int {
 	return int(math.Abs(float64(p1.X - p2.X))) + int(math.Abs(float64(p1.Y - p2.Y)))
 }
 
-func Sum(ints []int) int {
-	sum := 0
-	for _, n := range ints {
-		sum += n
-	}
-	return sum
-}
-
 func MaxInts(ints []int) int {
 	max := ints[0]
 	for _, n := range ints {
@@ -173,25 +156,12 @@ func IsNumber(s string) bool {
 	return err == nil
 }
 
-func Panic(format string, a ...interface{}) {
-	panic(fmt.Sprintf(format, a...))
-}
-
 func Make2DRuneSlice(n, m int) [][]rune {
 	a := make([][]rune, n)
 	for i := range a {
 		a[i] = make([]rune, m)
 	}
 	return a
-}
-
-func Copy2DIntSlice(matrix [][]int) [][]int {
-	duplicate := make([][]int, len(matrix))
-	for i := range matrix {
-		duplicate[i] = make([]int, len(matrix[i]))
-		copy(duplicate[i], matrix[i])
-	}
-	return duplicate
 }
 
 func Copy2DRuneSlice(matrix [][]rune) [][]rune {
