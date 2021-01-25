@@ -172,3 +172,7 @@ func Copy2DRuneSlice(matrix [][]rune) [][]rune {
 	}
 	return duplicate
 }
+
+func StringFromIntSlice(s []int) string {
+	return strings.Trim(strings.Join(strings.Fields(fmt.Sprint(s)), ", "), "[]")
+}

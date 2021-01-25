@@ -91,6 +91,7 @@ func parse(s string) map[string]string {
 	return kvs
 }
 
+// todo: totally overkill, but wanted to try function pointers in Go
 func validate(k string, v string) bool {
 	f := map[string] func(s string) bool{"byr":byr, "iyr":iyr, "eyr":eyr, "hgt":hgt, "hcl":hcl, "ecl":ecl, "pid":pid, "cid":cid}
 	return f[k](v)

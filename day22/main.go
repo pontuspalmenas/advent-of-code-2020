@@ -2,6 +2,7 @@ package main
 
 import (
 	. "aoc"
+	. "aoc/types"
 	"fmt"
 	"strings"
 	"time"
@@ -41,8 +42,7 @@ func (d *Deck) Size() int {
 }
 
 func (d *Deck) String() string {
-	return fmt.Sprintf("Player %d's deck: %s",
-		d.player, strings.Join(strings.Fields(fmt.Sprint(d.cards)), ", "))
+	return fmt.Sprintf("Player %d's deck: %s", d.player, StringFromIntSlice(d.cards))
 }
 
 func Draw(p1 *Deck, p2 *Deck) *Deck {
@@ -100,48 +100,72 @@ func Solve2(input string) int {
 	// To play a sub-game of Recursive Combat, each player creates a new deck by making a copy of the next cards in their deck
 	// (the quantity of cards copied is equal to the number on the card they drew to trigger the sub-game).
 
-	winner := RecursiveCombat(1, p1, p2, []Deck{})
+	return RecursiveCombat(1, p1, p2).Score()
+}
+
+func RecursiveCombat(game int, p1, p2 *Deck) *Deck {
+	Printfln("=== Game %d ===", game)
+
+	seen := NewStringSet()
+	var winner *Deck
+	round := 1
+	for p1.Size() > 0 && p2.Size() > 0 {
+		key := p1.String() + "&" + p2.String()
+		if seen.Contains(key) {
+			return p1
+		}
+		seen.Add(key)
+
+		Printfln("\n-- Round %d (Game %d) --", round, game)
+		if isBreakpoint(p1,p2,game,round) {
+			time.Sleep(100)
+		}
+		Printfln(p1.String())
+		Printfln(p2.String())
+
+		c1 := p1.Pop()
+		c2 := p2.Pop()
+
+		Printfln("Player 1 plays: %d", c1)
+		Printfln("Player 2 plays: %d", c2)
+
+		if p1.Size() >= c1 && p2.Size() >= c2 {
+			Printfln("Playing a sub-game to determine the winner...\n")
+			winner = RecursiveCombat(game+1, p1.CopySubset(c1), p2.CopySubset(c2))
+		} else {
+			if c1 > c2 {
+				winner = p1
+			} else {
+				winner = p2
+			}
+		}
+		if winner.player == 1 {
+			p1.Add(c1, c2)
+		} else {
+			p2.Add(c1, c2)
+		}
+		//winner.Add(c1, c2)
+		Printfln("Player %d wins round %d of game %d!", winner.player, round, game)
+		round++
+	}
 
 	if p1.Size() == 0 {
-		return p2.Score()
-	}
-	return p1.Score()
-}
-
-func RecursiveCombat(game int, p1, p2 *Deck, history []Deck) *Deck {
-	// todo: check if previous round had exact same cards
-	if playedBefore(p1, history) || playedBefore(p2, history) {
-		return p1
-	}
-
-	c1 := p1.Pop()
-	c2 := p2.Pop()
-	if c1 == p1.Size() && c2 == p2.Size() {
-		return RecursiveCombat(game+1, p1.CopySubset(c1), p2.CopySubset(c2), history)
+		winner = p2
 	} else {
-		return Draw(p1, p2)
+		winner = p1
 	}
+	Printfln("The winner of game %d is player %d!\n", game, winner.player)
+	if game > 1 {
+		Printfln("...anyway, back to game %d.", game-1)
+	}
+	return winner
 }
 
-func playedBefore(d *Deck, history []Deck) bool {
-	for _, h := range history {
-		if equal(d.cards, h.cards) {
-			return true
-		}
+func isBreakpoint(p1, p2 *Deck, game int, round int) bool {
+	if game == 1 && round == 10 {
+		return true
 	}
 	return false
-}
-
-func equal(a, b []int) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for i, v := range a {
-		if v != b[i] {
-			return false
-		}
-	}
-	return true
 }
 
 func ParseInput(input string) (*Deck, *Deck) {
