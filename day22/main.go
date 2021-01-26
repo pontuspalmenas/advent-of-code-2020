@@ -84,22 +84,6 @@ func Solve1(input string) int {
 
 func Solve2(input string) int {
 	p1, p2 := ParseInput(input)
-
-	// Before either player deals a card, if there was a previous round in this game that had exactly the same cards
-	// in the same order in the same players' decks, the game instantly ends in a win for player 1.
-
-	// Otherwise, this round's cards must be in a new configuration;
-	// the players begin the round by each drawing the top card of their deck as normal.
-
-	// If both players have at least as many cards remaining in their deck as the value of the card they just drew,
-	// the winner of the round is determined by playing a new game of Recursive Combat
-
-	// Otherwise, at least one player must not have enough cards left in their deck to recurse;
-	// the winner of the round is the player with the higher-value card.
-
-	// To play a sub-game of Recursive Combat, each player creates a new deck by making a copy of the next cards in their deck
-	// (the quantity of cards copied is equal to the number on the card they drew to trigger the sub-game).
-
 	return RecursiveCombat(1, p1, p2).Score()
 }
 
@@ -117,9 +101,7 @@ func RecursiveCombat(game int, p1, p2 *Deck) *Deck {
 		seen.Add(key)
 
 		Printfln("\n-- Round %d (Game %d) --", round, game)
-		if isBreakpoint(p1,p2,game,round) {
-			time.Sleep(100)
-		}
+
 		Printfln(p1.String())
 		Printfln(p2.String())
 
@@ -144,7 +126,6 @@ func RecursiveCombat(game int, p1, p2 *Deck) *Deck {
 		} else {
 			p2.Add(c1, c2)
 		}
-		//winner.Add(c1, c2)
 		Printfln("Player %d wins round %d of game %d!", winner.player, round, game)
 		round++
 	}
@@ -159,13 +140,6 @@ func RecursiveCombat(game int, p1, p2 *Deck) *Deck {
 		Printfln("...anyway, back to game %d.", game-1)
 	}
 	return winner
-}
-
-func isBreakpoint(p1, p2 *Deck, game int, round int) bool {
-	if game == 1 && round == 10 {
-		return true
-	}
-	return false
 }
 
 func ParseInput(input string) (*Deck, *Deck) {
