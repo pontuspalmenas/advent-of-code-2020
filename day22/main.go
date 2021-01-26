@@ -62,7 +62,9 @@ func (d *Deck) Score() int {
 }
 
 func (d *Deck) CopySubset(n int) *Deck {
-	return &Deck{player: d.player, cards: d.cards[:n]}
+	var cards []int
+	copy(cards, d.cards[:n])
+	return &Deck{player: d.player, cards: cards}
 }
 
 func Solve1(input string) int {
@@ -84,7 +86,11 @@ func Solve1(input string) int {
 
 func Solve2(input string) int {
 	p1, p2 := ParseInput(input)
-	return RecursiveCombat(1, p1, p2).Score()
+	score := RecursiveCombat(1, p1, p2).Score()
+	Printfln("\n\n== Post-game results ==")
+	Printfln(p1.String())
+	Printfln(p2.String())
+	return score
 }
 
 func RecursiveCombat(game int, p1, p2 *Deck) *Deck {
@@ -122,9 +128,9 @@ func RecursiveCombat(game int, p1, p2 *Deck) *Deck {
 			}
 		}
 		if winner.player == 1 {
-			p1.Add(c1, c2)
+			p1.cards = append(p1.cards, c1, c2)
 		} else {
-			p2.Add(c1, c2)
+			p2.cards = append(p2.cards, c2, c1)
 		}
 		Printfln("Player %d wins round %d of game %d!", winner.player, round, game)
 		round++
