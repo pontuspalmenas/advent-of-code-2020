@@ -23,11 +23,11 @@ func Solve1(input []string) int {
 
 	earliestBus, when := findBus(myDeparture, busses)
 
-	return (when-myDeparture)*earliestBus
+	return (when - myDeparture) * earliestBus
 }
 
 type Bus struct {
-	id int
+	id     int
 	offset int
 }
 
@@ -42,7 +42,7 @@ func Solve2(input []string) int {
 		t += now
 		found = true
 		for _, bus := range busses {
-			if (t + bus.offset) % bus.id != 0 {
+			if (t+bus.offset)%bus.id != 0 {
 				found = false
 				break
 			}
@@ -69,31 +69,10 @@ func findBus(myDeparture int, busses []int) (int, int) {
 	i := myDeparture
 	for {
 		for _, bus := range busses {
-			if i % bus == 0 {
+			if i%bus == 0 {
 				return bus, i
 			}
 		}
-
 		i++
-	}
-}
-
-func printSchedule(busses []int) {
-	fmt.Print("time\t")
-	for _, bus := range busses {
-		fmt.Printf("bus %d\t", bus)
-	}
-	fmt.Println()
-
-	for i:=929; i<950; i++ {
-		fmt.Printf("%d\t", i)
-		for _, bus := range busses {
-			if i % bus == 0 {
-				fmt.Printf("\t  D\t")
-			} else {
-				fmt.Printf("\t  .\t")
-			}
-		}
-		fmt.Println()
 	}
 }
