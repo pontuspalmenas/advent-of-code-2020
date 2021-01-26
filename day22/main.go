@@ -20,7 +20,7 @@ func main() {
 
 type Deck struct {
 	player int
-	cards []int
+	cards  []int
 }
 
 func (d *Deck) Peek() int {
@@ -56,13 +56,13 @@ func (d *Deck) Score() int {
 	score := 0
 	size := d.Size()
 	for i := 0; i < size; i++ {
-		score += d.cards[i] * (size-i)
+		score += d.cards[i] * (size - i)
 	}
 	return score
 }
 
 func (d *Deck) CopySubset(n int) *Deck {
-	var cards []int
+	cards := make([]int, n)
 	copy(cards, d.cards[:n])
 	return &Deck{player: d.player, cards: cards}
 }
@@ -86,19 +86,12 @@ func Solve1(input string) int {
 
 func Solve2(input string) int {
 	p1, p2 := ParseInput(input)
-	score := RecursiveCombat(1, p1, p2).Score()
-	Printfln("\n\n== Post-game results ==")
-	Printfln(p1.String())
-	Printfln(p2.String())
-	return score
+	return RecursiveCombat(p1, p2).Score()
 }
 
-func RecursiveCombat(game int, p1, p2 *Deck) *Deck {
-	Printfln("=== Game %d ===", game)
-
+func RecursiveCombat(p1, p2 *Deck) *Deck {
 	seen := NewStringSet()
 	var winner *Deck
-	round := 1
 	for p1.Size() > 0 && p2.Size() > 0 {
 		key := p1.String() + "&" + p2.String()
 		if seen.Contains(key) {
@@ -106,20 +99,11 @@ func RecursiveCombat(game int, p1, p2 *Deck) *Deck {
 		}
 		seen.Add(key)
 
-		Printfln("\n-- Round %d (Game %d) --", round, game)
-
-		Printfln(p1.String())
-		Printfln(p2.String())
-
 		c1 := p1.Pop()
 		c2 := p2.Pop()
 
-		Printfln("Player 1 plays: %d", c1)
-		Printfln("Player 2 plays: %d", c2)
-
 		if p1.Size() >= c1 && p2.Size() >= c2 {
-			Printfln("Playing a sub-game to determine the winner...\n")
-			winner = RecursiveCombat(game+1, p1.CopySubset(c1), p2.CopySubset(c2))
+			winner = RecursiveCombat(p1.CopySubset(c1), p2.CopySubset(c2))
 		} else {
 			if c1 > c2 {
 				winner = p1
@@ -132,20 +116,12 @@ func RecursiveCombat(game int, p1, p2 *Deck) *Deck {
 		} else {
 			p2.cards = append(p2.cards, c2, c1)
 		}
-		Printfln("Player %d wins round %d of game %d!", winner.player, round, game)
-		round++
 	}
 
 	if p1.Size() == 0 {
-		winner = p2
-	} else {
-		winner = p1
+		return p2
 	}
-	Printfln("The winner of game %d is player %d!\n", game, winner.player)
-	if game > 1 {
-		Printfln("...anyway, back to game %d.", game-1)
-	}
-	return winner
+	return p1
 }
 
 func ParseInput(input string) (*Deck, *Deck) {
